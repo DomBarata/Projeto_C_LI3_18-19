@@ -8,6 +8,7 @@
 #include "Cliente.h"
 #include "List_Clientes.h"
 #include "CatClientes.h"
+#include "VendaUnica.h"
 
 
 int //Segmento de Teste
@@ -15,6 +16,7 @@ int //Segmento de Teste
 	{
 		CatProdutos lojaProds;
 		CatClientes lojaClientes;
+		VendaUnica v;
 		List_Produtos lP;
 		List_Clientes lC;
 
@@ -36,5 +38,10 @@ int //Segmento de Teste
 
 	 	produtoExisteNoCatalogo(lojaProds, "AF1159")?printf("AF1159 existe\n"):printf("AF1159 não existe\n");
 		clienteExisteNoCatalogo(lojaClientes, "W3883")?printf("W3883 existe\n"):printf("W3883 não existe\n");
+	 	
+		v = divideLinhasDeVenda("KR1583 77.72 128 P L4891 2 1", lojaProds, lojaClientes);
+		if(v!=NULL)
+			printVenda(v);
+
 	 	return 0;
 	}
