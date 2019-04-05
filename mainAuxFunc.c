@@ -6,7 +6,6 @@
 #include "Cliente.h"
 #include "VendaUnica.h"
 
-
 #define BUFFER 			20
 #define BUFFERVENDAS 	50
 #define LINHASPRODUTOS 	200000
@@ -87,11 +86,11 @@ VendasFactEFil
 		char str[BUFFERVENDAS];
 		int i = 0;
 
-		VendasFactEFil ven = malloc(sizeof(vendasVarias));
+		VendasFactEFil ven = malloc(sizeof(struct vendasVarias));
 		ven->fact = inicializa_Facturacao();
 		for (int j = 0; j < NUMFILIAIS; ++j)
 		{
-			ven->filial[j] = inicializaFilial();
+			ven->fil[j] = inicializaFilial();
 		}			
 
 		fp = fopen("Files/Vendas_1M.txt", "r");
@@ -120,7 +119,20 @@ VendasFactEFil
 Facturacao
 	GeraFact(VendasFactEFil vF) {return vF->fact;}
 
-Filial 
-	GeraUmaFilial(VendasFactEFil vF, i) {return vF->fil[i];}
+Filial //dentro de um ciclo for lim=3
+	GeraUmaFilial(VendasFactEFil vF, int i) {return vF->fil[i];}
 
-SGV
+SGV 
+	CriaSGV(CatProdutos catp, CatClientes catc, 
+		Facturacao f, Filial* fil)
+	{
+		SGV interface = malloc(sizeof(struct sgv));
+		interface->cp = catp;
+		interface->ccli = catc;
+		interface->fact = f;
+		interface->fil[0] = fil[0];
+		interface->fil[1] = fil[1];
+		interface->fil[2] = fil[2];
+
+		return interface;
+	}
