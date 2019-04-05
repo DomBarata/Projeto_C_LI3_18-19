@@ -24,9 +24,7 @@ List_Produtos
 List_Produtos 
 	insereUmProduto(List_Produtos l, Produto p)
 	{
-		int val[3] = {0,0,0};
-		
- 		g_hash_table_insert(l->produtos, getCodProd(p), val);
+		g_hash_table_insert(l->produtos, getCodProd(p), p);
 
 	    return l;
 	}
