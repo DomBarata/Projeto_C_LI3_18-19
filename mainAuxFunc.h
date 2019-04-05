@@ -2,6 +2,10 @@
 #include "CatClientes.h"
 #include "Facturacao.h"
 #include "Filial.h"
+#define NUMFILIAIS 3
+
+
+typedef struct vendasVarias* VendasFactEFil;
 
 struct sgv
 {
@@ -18,7 +22,7 @@ CatProdutos criaCatalogoProdutos(CatProdutos catp);
 //Funcao que cria o catalogo de Clientes, ja validado semanticamente
 CatClientes criaCatalogoClientes(CatClientes catc);
 
-VendasFactEFil criaVendasDivididas(Facturacao fact, Filial* fil, CatProdutos catp, CatClientes catc);
+VendasFactEFil criaVendasDivididas(CatProdutos catp, CatClientes catc);
 
 
 Facturacao GeraFact(VendasFactEFil vF);

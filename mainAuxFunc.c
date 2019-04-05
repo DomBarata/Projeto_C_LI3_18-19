@@ -11,15 +11,12 @@
 #define LINHASPRODUTOS 	200000
 #define LINHASCLIENTES 	20000
 #define LINHASVENDAS 	1000000
-#define NUMFILIAIS 3
 
 struct vendasVarias
 {
 	Facturacao fact;
 	Filial fil[NUMFILIAIS];
 };
-typedef struct vendasVarias* VendasFactEFil;
-
 CatProdutos 
 	criaCatalogoProdutos(CatProdutos catp)
 	{
@@ -79,7 +76,7 @@ CatClientes
 	}
 
 VendasFactEFil
-	criaVendasDivididas(Facturacao fact, Filial* fil, CatProdutos catp, CatClientes catc)
+	criaVendasDivididas(CatProdutos catp, CatClientes catc)
 	{
 		FILE* fp;
 		VendaUnica v;
@@ -97,7 +94,7 @@ VendasFactEFil
 		if(fp == NULL)
 		{
 			perror("I/O error");
-			fact = NULL;
+			ven = NULL;
 		}
 		else
 		{
@@ -123,16 +120,15 @@ Filial //dentro de um ciclo for lim=3
 	GeraUmaFilial(VendasFactEFil vF, int i) {return vF->fil[i];}
 
 SGV 
-	CriaSGV(CatProdutos catp, CatClientes catc, 
-		Facturacao f, Filial* fil)
+	CriaSGV(CatProdutos catp, CatClientes catc, Facturacao f, Filial* fil)
 	{
 		SGV interface = malloc(sizeof(struct sgv));
 		interface->cp = catp;
 		interface->ccli = catc;
 		interface->fact = f;
-		interface->fil[0] = fil[0];
-		interface->fil[1] = fil[1];
-		interface->fil[2] = fil[2];
+		interface->filiais[0] = fil[0];
+		interface->filiais[1] = fil[1];
+		interface->filiais[2] = fil[2];
 
 		return interface;
 	}

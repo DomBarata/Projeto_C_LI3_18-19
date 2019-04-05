@@ -17,7 +17,7 @@ int //Segmento de Teste
 
 		CatProdutos lojaProds;
 		CatClientes lojaClientes;
-		Facturacao ano2019;
+		VendasFactEFil vendas;
 //		VendaUnica v;
 //		List_Produtos lP;
 //		List_Clientes lC;
@@ -30,9 +30,9 @@ int //Segmento de Teste
 	 	lojaClientes = criaCatalogoClientes(lojaClientes);
 		if(lojaClientes == NULL) exit(1);	
 
-		ano2019 = inicializa_Facturacao();
-		ano2019 = criaFacturacao(ano2019, lojaProds, lojaClientes);
-		if(ano2019 == NULL) exit(1);
+
+		vendas = criaVendasDivididas(lojaProds, lojaClientes);
+		if(vendas == NULL) exit(1);
 /*
 	 	lP = listaPorLetraProdutos(lojaProds, 'A');
 	 	if(lP == NULL) exit(1);
