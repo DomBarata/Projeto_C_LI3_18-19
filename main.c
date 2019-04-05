@@ -14,11 +14,13 @@
 int //Segmento de Teste
 	main(int argc, char const *argv[])
 	{
+
 		CatProdutos lojaProds;
 		CatClientes lojaClientes;
-		VendaUnica v;
-		List_Produtos lP;
-		List_Clientes lC;
+		Facturacao ano2019;
+//		VendaUnica v;
+//		List_Produtos lP;
+//		List_Clientes lC;
 
 		lojaProds = inicializa_CatProdutos();
 		lojaProds = criaCatalogoProdutos(lojaProds);	
@@ -28,6 +30,10 @@ int //Segmento de Teste
 	 	lojaClientes = criaCatalogoClientes(lojaClientes);
 		if(lojaClientes == NULL) exit(1);	
 
+		ano2019 = inicializa_Facturacao();
+		ano2019 = criaFacturacao(ano2019, lojaProds, lojaClientes);
+		if(ano2019 == NULL) exit(1);
+/*
 	 	lP = listaPorLetraProdutos(lojaProds, 'A');
 	 	if(lP == NULL) exit(1);
 	 	consultarProdutos(lP);
@@ -38,10 +44,9 @@ int //Segmento de Teste
 
 	 	produtoExisteNoCatalogo(lojaProds, "AF1159")?printf("AF1159 existe\n"):printf("AF1159 não existe\n");
 		clienteExisteNoCatalogo(lojaClientes, "W3883")?printf("W3883 existe\n"):printf("W3883 não existe\n");
-	 	
-		v = divideLinhasDeVenda("KR1583 77.72 128 P L4891 2 1", lojaProds, lojaClientes);
-		if(v!=NULL)
-			printVenda(v);
+*/	 	
+
+
 
 	 	return 0;
 	}

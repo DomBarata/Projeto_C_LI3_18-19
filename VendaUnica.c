@@ -35,6 +35,7 @@ VendaUnica
 			strAux = strtok(NULL, " ");
 			i++;	
 		}
+
 		if (verifica(campos, catp, catc))
 		{
 			v->codProd = g_strdup(campos[0]);
@@ -47,7 +48,7 @@ VendaUnica
 		}
 		else
 			v = NULL;
-		
+	
 		return v;
 	}
 
@@ -75,6 +76,7 @@ static gboolean
 			check = 0;
 		if(!clienteExisteNoCatalogo(catc, campos[4]))
 			check = 0;
+
 		return check;
 	}
 
@@ -89,3 +91,24 @@ void
 		printf("%d\n", v->mes);
 		printf("%d\n", v->filial);
 	}
+
+char*
+	getCodProdVendas(VendaUnica v)	{return v->codProd;}
+
+char*
+	getCodCliVendas(VendaUnica v)	{return v->codCli;}
+
+double
+	getprecoUnitVendas(VendaUnica v)	{return v->precoUnit;}
+
+int
+	getQuantidadeVendas(VendaUnica v)	{return v->quantidade;}
+
+char*
+	getTipoVendas(VendaUnica v)	{return v->tipo;}
+
+int
+	getMesVendas(VendaUnica v)	{return v->mes;}
+
+int
+	getFilialVendas(VendaUnica v)	{return v->filial;}

@@ -4,10 +4,14 @@
 #include "mainAuxFunc.h"
 #include "Produto.h"
 #include "Cliente.h"
+#include "VendaUnica.h"
 
-#define BUFFER 20
-#define LINHASPRODUTOS 200000
-#define LINHASCLIENTES 20000
+
+#define BUFFER 			20
+#define BUFFERVENDAS 	50
+#define LINHASPRODUTOS 	200000
+#define LINHASCLIENTES 	20000
+#define LINHASVENDAS 	1000000
 
 CatProdutos 
 	criaCatalogoProdutos(CatProdutos catp)
@@ -35,7 +39,6 @@ CatProdutos
 			}
 			fclose(fp);
 		}
-
 		return catp;
 	}
 
@@ -65,6 +68,34 @@ CatClientes
 			}
 			fclose(fp);
 		}
-
 		return catc;
+	}
+
+Facturacao
+	criaFacturacao(Facturacao fact, CatProdutos catp, CatClientes catc)
+	{
+		FILE* fp;
+		VendaUnica v;
+		char str[BUFFERVENDAS];
+		int i = 0;
+
+		fp = fopen("Files/Vendas_1M.txt", "r");
+		if(fp == NULL)
+		{
+			perror("I/O error");
+			fact = NULL;
+		}
+		else
+		{
+			while(fgets(str, BUFFERVENDAS, fp) && i < LINHASVENDAS)
+			{
+				v = divideLinhasDeVenda(str, catp, catc);
+				printVenda(v);
+				if(v)
+					fact = insereNovaFacturacao(v, fact);
+				i++;
+			}
+			fclose(fp);
+		}
+		return fact;
 	}
