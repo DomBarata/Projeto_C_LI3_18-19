@@ -1,5 +1,8 @@
 #include <glib.h>
 
+#ifndef PRODUTO_H
+#define PRODUTO_H
+
 typedef struct prod* Produto; //Estrutura que define um produto
 
 //Funcao que dado um codigo de produto devolve um produto
@@ -13,3 +16,5 @@ gboolean verificaProduto(Produto codigo);
 
 //Funcao que imprime o codigo do produto
 void printProduto(Produto p);
+
+#endif

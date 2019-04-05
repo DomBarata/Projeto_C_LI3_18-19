@@ -33,9 +33,10 @@ VendaUnica
 		{
 			campos[i] = g_strdup(strAux);
 			strAux = strtok(NULL, " ");
-			i++;	
+			i++;
 		}
-
+		strtok(campos[6], "\n\r");
+		
 		if (verifica(campos, catp, catc))
 		{
 			v->codProd = g_strdup(campos[0]);

@@ -1,5 +1,8 @@
 #include <glib.h>
 
+#ifndef LIST_PRODUTOS_H
+#define LIST_PRODUTOS_H
+
 typedef struct listaProdutos* List_Produtos; //Estrutura de dados que contem
 											 //um array de Produtos
 
@@ -14,3 +17,5 @@ void consultarProdutos(List_Produtos l);
 
 //Funcao que dada uma lista, verifica se o codigo do produto esta inserido
 gboolean produtoExisteNaLista(List_Produtos l, char* codProd);
+
+#endif

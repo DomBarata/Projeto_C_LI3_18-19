@@ -1,5 +1,8 @@
 #include <glib.h>
 
+#ifndef LIST_CLIENTES_H
+#define LIST_CLIENTES_H
+
 typedef struct listaClientes* List_Clientes; //Estrutura de dados que contem
 											 //um array de Clientes
 
@@ -14,3 +17,5 @@ void consultarClientes(List_Clientes l);
 
 //Funcao que dada uma lista, verifica se o codigo do cliente esta inserido
 gboolean clienteExisteNaLista(List_Clientes l, char* codCli);
+
+#endif

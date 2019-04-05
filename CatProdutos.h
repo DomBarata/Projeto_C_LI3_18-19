@@ -2,6 +2,9 @@
 #include "Produto.h"
 #include "List_Produtos.h"
 
+#ifndef CATPRODUTOS_H
+#define CATPRODUTOS_H
+
 typedef struct catProds* CatProdutos; //Estrutura que define um array
 									  //de 26 List_Clientes
 
@@ -17,3 +20,5 @@ List_Produtos listaPorLetraProdutos(CatProdutos catp, char letra);
 
 //funcao que verifica que o produto esta inserido no catalogo
 gboolean produtoExisteNoCatalogo(CatProdutos catp, char* cod);
+
+#endif

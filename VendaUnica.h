@@ -1,6 +1,9 @@
 #include "CatProdutos.h"
 #include "CatClientes.h"
 
+#ifndef VENDAUNICA_H
+#define VENDAUNICA_H
+
 typedef struct venda* VendaUnica;
 
 VendaUnica divideLinhasDeVenda(char* str, CatProdutos catp, CatClientes catc);
@@ -19,3 +22,5 @@ char* getTipoVendas(VendaUnica v);
 int getMesVendas(VendaUnica v);
 
 int getFilialVendas(VendaUnica v);
+
+#endif

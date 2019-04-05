@@ -2,6 +2,9 @@
 #include "Cliente.h"
 #include "List_Clientes.h"
 
+#ifndef CATCLINTES_H
+#define CATCLIENES_H
+
 typedef struct catClis* CatClientes; //Estrutura que define um array
 									 //de 26 List_Clientes
 
@@ -17,3 +20,5 @@ List_Clientes listaPorLetraClientes(CatClientes catc, char letra);
 
 //funcao que verifica que o cliente esta inserido no catalogo
 gboolean clienteExisteNoCatalogo(CatClientes catc, char* cod);
+
+#endif

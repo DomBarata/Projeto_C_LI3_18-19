@@ -30,7 +30,6 @@ Filial inicializaFilial(){
 }
 
 Filial insereFilial(VendaUnica v, Filial fil){
-	printf("ok\n");
 	int* ptrQ = malloc(sizeof(int));
 	*ptrQ = getQuantidadeVendas(v);
 	QuantidadeProd value;
