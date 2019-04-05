@@ -12,6 +12,14 @@
 #define LINHASPRODUTOS 	200000
 #define LINHASCLIENTES 	20000
 #define LINHASVENDAS 	1000000
+#define NUMFILIAIS 3
+
+struct vendasVarias
+{
+	Facturacao fact;
+	Filial fil[NUMFILIAIS];
+};
+typedef struct vendasVarias* VendasFactEFil;
 
 CatProdutos 
 	criaCatalogoProdutos(CatProdutos catp)
@@ -71,13 +79,20 @@ CatClientes
 		return catc;
 	}
 
-Facturacao
-	criaFacturacao(Facturacao fact, CatProdutos catp, CatClientes catc)
+VendasFactEFil
+	criaVendasDivididas(Facturacao fact, Filial* fil, CatProdutos catp, CatClientes catc)
 	{
 		FILE* fp;
 		VendaUnica v;
 		char str[BUFFERVENDAS];
 		int i = 0;
+
+		VendasFactEFil ven = malloc(sizeof(vendasVarias));
+		ven->fact = inicializa_Facturacao();
+		for (int j = 0; j < NUMFILIAIS; ++j)
+		{
+			ven->filial[j] = inicializaFilial();
+		}			
 
 		fp = fopen("Files/Vendas_1M.txt", "r");
 		if(fp == NULL)
@@ -90,12 +105,22 @@ Facturacao
 			while(fgets(str, BUFFERVENDAS, fp) && i < LINHASVENDAS)
 			{
 				v = divideLinhasDeVenda(str, catp, catc);
-				printVenda(v);
 				if(v)
-					fact = insereNovaFacturacao(v, fact);
+				{
+					ven->fact = insereNovaFacturacao(v, ven->fact);
+					ven->fil[getFilialVendas(v)-1] = insereFilial(v, ven->fil[getFilialVendas(v)-1]);
+				}
 				i++;
 			}
 			fclose(fp);
 		}
-		return fact;
+		return ven;
 	}
+
+Facturacao
+	GeraFact(VendasFactEFil vF) {return vF->fact;}
+
+Filial 
+	GeraUmaFilial(VendasFactEFil vF, i) {return vF->fil[i];}
+
+SGV

@@ -24,11 +24,11 @@ VendaUnica
 		char* campos[7];
 		char* strAux;
 		long int i = 0;
-		int len = strlen(str);
-		char linha[len+1];
-		strcpy(linha, str);
+//		int len = strlen(str);
+//		char linha[len+1];
+//		strcpy(linha, str);
 
-		strAux = strtok(linha, " ");
+		strAux = strtok(str, " ");
 		while(!(strAux == NULL))
 		{
 			campos[i] = g_strdup(strAux);

@@ -26,6 +26,6 @@ Promo
 			p->ePromo[0] = insereInfo(v, p->ePromo[0]);
 		else
 			p->ePromo[1] = insereInfo(v, p->ePromo[1]);
-
+		
 		return p;
 	}

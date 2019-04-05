@@ -38,7 +38,8 @@ Fact_Info
 			n->qtd = getQuantidadeVendas(v);
 			n->preco = getprecoUnitVendas(v);
 
-			g_hash_table_insert(f->info, getCodProdVendas(v), n);
+
+			g_hash_table_insert(f->info, key, n);
 		}
 		else
 		{

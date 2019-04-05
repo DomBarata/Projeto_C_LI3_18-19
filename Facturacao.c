@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "Facturacao.h"
 #include "Promo.h"
 #include "Fact_Info.h"
@@ -16,7 +17,7 @@ Facturacao
 
 		for (int i = 0; i < 12; ++i)
 		{
-			f->mes[1] = inicializa_Promo();
+			f->mes[i] = inicializa_Promo();
 		}
 		return f;
 	}
