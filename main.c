@@ -129,6 +129,8 @@ VendasFactEFil
 				v = divideLinhasDeVenda(str, catp, catc);
 				if(v)
 				{
+					catp = setCatProdutos(catp, getCodProdVendas(v), getFilialVendas(v));
+					catc = setCatClientes(catc, getCodCliVendas(v), getFilialVendas(v));
 					ven->fact = insereNovaFacturacao(v, ven->fact);
 					ven->fil[getFilialVendas(v)-1] = insereFilial(v, ven->fil[getFilialVendas(v)-1]);
 					linhasValidas++;

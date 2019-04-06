@@ -39,5 +39,8 @@ gboolean //Verifica se o codigo de produto esta semanticamente correto
 		return check;
 	}
 
+Produto
+	setFilialVenda(Produto p, int fil) {p->filialVenda[fil-1] = TRUE;}
+
 void //Esta funcao envia para o utilizador o produto
 	printProduto(Produto p)	{printf("%s\n", p->produto);}

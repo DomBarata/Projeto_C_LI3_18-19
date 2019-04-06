@@ -30,6 +30,14 @@ CatProdutos
 	    return catPro;
 	}
 
+CatProdutos 
+	setCatProdutos(CatProdutos catP, char* prod, int fil)
+	{
+		catP->lista[prod[0] - 'A'] = setList_Produtos(catP->lista[prod[0] - 'A'], prod, fil);
+
+	    return catP;
+	}
+
 List_Produtos 
 	listaPorLetraProdutos(CatProdutos catp, char letra)
 	{

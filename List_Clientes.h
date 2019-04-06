@@ -12,6 +12,8 @@ List_Clientes inicializa_List_Clientes();
 //Funcao que dada uma lista e um cliente, o insere nessa mesma lista
 List_Clientes insereUmCliente(List_Clientes l, Cliente c);
 
+List_Clientes setList_Clientes(List_Clientes l, char* cli, int fil);
+
 //Print no ecra de uma lista ORDENADA de clientes
 void consultarClientes(List_Clientes l);
 

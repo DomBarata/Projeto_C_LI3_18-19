@@ -33,6 +33,17 @@ List_Produtos
 	    return l;
 	}
 
+List_Produtos
+	setList_Produtos(List_Produtos l, char* prod, int fil)
+	{
+		Produto p;
+
+		p = g_hash_table_lookup(l->produtos, prod);
+		p = setFilialVenda(p, fil);
+
+	    return l;
+	}
+
 void 
 	consultarProdutos(List_Produtos l)
 	{

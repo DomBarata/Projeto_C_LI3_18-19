@@ -11,6 +11,8 @@ Produto criaProduto(char* codProd);
 //Funcao que dado um produto retorna o seu codigo
 char* getCodProd(Produto p);
 
+Produto setFilialVenda(Produto p, int fil);
+
 //Funcao que verifica semanticamente a validade do produto
 gboolean verificaProduto(Produto codigo);
 

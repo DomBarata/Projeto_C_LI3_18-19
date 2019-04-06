@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <glib.h>
 #include "Cliente.h"
 
 struct cli
 {
 	char* cliente;
+	gboolean filialCompra[3];
 };
 
 Cliente
@@ -14,6 +14,10 @@ Cliente
 	{
 		Cliente c = malloc(sizeof(struct cli));
 		c->cliente = g_strdup(codCli);
+		for (int i = 0; i < 3; ++i)
+		{
+			c->filialCompra[i] = 0;
+		}
 
 		return c;
 	}
@@ -37,6 +41,9 @@ gboolean
 
 		return check;
 	}
+
+Cliente
+	setFilialCompra(Cliente c, int fil) {c->filialCompra[fil-1] = TRUE;}
 
 void //Esta funcao envia para o utilizador o cliente
 	printCliente(Cliente c)	{printf("%s\n", c->cliente);}

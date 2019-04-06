@@ -12,6 +12,8 @@ List_Produtos inicializa_List_Produtos();
 //Funcao que dada uma lista e um produto, o insere nessa mesma lista
 List_Produtos insereUmProduto(List_Produtos l, Produto p);
 
+
+List_Produtos setList_Produtos(List_Produtos l, char* prod, int fil);
 //Print no ecra de uma lista ORDENADA de produtos
 void consultarProdutos(List_Produtos l);
 

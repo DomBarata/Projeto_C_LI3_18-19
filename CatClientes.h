@@ -14,6 +14,8 @@ CatClientes inicializa_CatClientes();
 //Funcao que dado um catalogo e um cliente, o insere nesse mesmo catalogo
 CatClientes insereClientes(CatClientes catCli, Cliente cli);
 
+CatClientes setCatClientes(CatClientes catC, char* cli, int fil);
+
 //Funcao que dado um catalogo e uma letra, retorna uma lista de
 //clientes comecados por essa mesma letra
 List_Clientes listaPorLetraClientes(CatClientes catc, char letra);

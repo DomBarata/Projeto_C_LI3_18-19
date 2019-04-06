@@ -24,9 +24,18 @@ List_Clientes
 List_Clientes 
 	insereUmCliente(List_Clientes l, Cliente c)
 	{
-		int *val = malloc(sizeof(int));
-		*val = 1;
- 		g_hash_table_insert(l->clientes, getCodCli(c), val);
+		g_hash_table_insert(l->clientes, getCodCli(c), c);
+
+	    return l;
+	}
+
+List_Clientes 
+	setList_Clientes(List_Clientes l, char* cli, int fil)
+	{
+		Cliente c;
+
+		c = g_hash_table_lookup(l->clientes, cli);
+		c = setFilialCompra(c, fil);
 
 	    return l;
 	}

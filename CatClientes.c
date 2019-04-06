@@ -30,6 +30,14 @@ CatClientes
 	    return catC;
 	}
 
+CatClientes 
+	setCatClientes(CatClientes catC, char* cli, int fil)
+	{
+		catC->lista[cli[0] - 'A'] = setList_Clientes(catC->lista[cli[0] - 'A'], cli, fil);
+
+	    return catC;
+	}
+
 List_Clientes 
 	listaPorLetraClientes(CatClientes catc, char letra)
 	{
