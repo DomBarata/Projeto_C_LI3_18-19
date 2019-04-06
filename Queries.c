@@ -82,18 +82,10 @@ static SGV
 		fgets(files, 100, stdin);
 		strtok(files, "\n\r");
 
-		if(strcmp(files,"\n"))
-		{
-			fileProd = NULL;
-			fileCli = NULL;
-			fileVendas = NULL;
-		}
-		else
-		{
-			fileProd = strtok(files, " ");
-			fileCli = strtok(NULL, " ");
-			fileVendas = strtok(NULL, " ");
-		}
+		fileProd = strtok(files, " ");
+		fileCli = strtok(NULL, " ");
+		fileVendas = strtok(NULL, " ");
+		
 		printf("%s\n",fileProd);
 		printf("%s\n",fileCli);
 		printf("%s\n",fileVendas);
