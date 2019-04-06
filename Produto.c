@@ -6,7 +6,7 @@
 struct prod
 {
 	char* produto;
-	gboolean vendaFil[3];
+	gboolean filialVenda[3];
 };
 
 Produto //Inicializa a struct prod alocando memoria
@@ -14,10 +14,9 @@ Produto //Inicializa a struct prod alocando memoria
 	{
 		Produto p = malloc(sizeof(struct prod));
 		p->produto = g_strdup(codProd);
-		p->vendaFil[0] = FALSE;
-		p->vendaFil[1] = FALSE;
-		p->vendaFil[2] = FALSE;
-		
+		p->filialVenda[0] = FALSE;
+		p->filialVenda[1] = FALSE;
+		p->filialVenda[2] = FALSE;
 		return p;
 	}
 

@@ -18,4 +18,6 @@ void consultarProdutos(List_Produtos l);
 //Funcao que dada uma lista, verifica se o codigo do produto esta inserido
 gboolean produtoExisteNaLista(List_Produtos l, char* codProd);
 
+int dimensaoLista(List_Produtos l);
+
 #endif

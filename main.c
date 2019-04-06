@@ -35,8 +35,9 @@ CatProdutos
 		fp = fopen(fileRead, "r");
 		if(fp == NULL)	
 		{
-			perror("I/O error"); 
+			perror("File de produtos inexistente"); 
 			catp = NULL;
+			exit(1);
 		}	
 		else
 		{
@@ -52,10 +53,10 @@ CatProdutos
 				linhasLidas++;
 			}
 			fclose(fp);
+			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
+
 		}
 		return catp;
-		printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
-
 	}
 
 CatClientes 
@@ -72,8 +73,9 @@ CatClientes
 		fp = fopen(fileRead, "r");
 		if(fp == NULL)	
 		{
-			perror("I/O error"); 
+			perror("File de clientes inexistente"); 
 			catc = NULL;
+			exit(1);
 		}	
 		else
 		{
@@ -89,10 +91,8 @@ CatClientes
 				linhasLidas++;
 			}
 			fclose(fp);
+			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
 		}
-
-		printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
-
 		return catc;
 	}
 
@@ -118,8 +118,9 @@ VendasFactEFil
 		fp = fopen(fileRead, "r");
 		if(fp == NULL)
 		{
-			perror("I/O error");
+			perror("File de vendas inexistente");
 			ven = NULL;
+			exit(1);
 		}
 		else
 		{
@@ -135,9 +136,8 @@ VendasFactEFil
 				linhasLidas++;
 			}
 			fclose(fp);
+			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
 		}
-
-		printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
 		return ven;
 	}
 

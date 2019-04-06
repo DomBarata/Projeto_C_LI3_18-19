@@ -1,25 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <glib.h>
 #include "Facturacao.h"
 #include "Queries.h"
 
 static int menu();
-static SGV Query1(SGV gestao);
+static SGV Query1(SGV gestao, char* files);
+static void Query2(SGV gestao);
 
 void
 	runQueries(SGV gestao)
 	{
 		gboolean flag = TRUE;
-		//gestao = Query1(gestao);
+		char files[100] = "";
+
+		gestao = Query1(gestao, files);
 
 		do
 		{
 			switch(menu())
 			{
-				case 1: gestao = Query1(gestao);
+				case 1: printf("Insira o nome dos 3 ficheiros separados unicamente por um espaço\n(ex.: fileProdutos.txt fileClientes.txt fileVendas.txt)\n\n");
+						fgets(files, 100, stdin);
+						gestao = Query1(gestao, files);
 						break;
-				case 2: break;
+				case 2: Query2(gestao);
+						break;
 				case 3: break;
 				case 4: break;
 				case 5: break;
@@ -49,8 +56,8 @@ static int
 				printf("Opção selecionada não existe, por favor estolha outra\n\n");
 			}
 			printf("\t---------MENU---------\n\n");
-			printf("Query 1 - \n");
-			printf("Query 2 - \n");
+			printf("Query 1 - Fazer leitura de outros ficheiros de dados\n");
+			printf("Query 2 - Consulta produtos do catalogo\n");
 			printf("Query 3 - \n");
 			printf("Query 4 - \n");
 			printf("Query 5 - \n");
@@ -71,24 +78,29 @@ static int
 	}
 
 static SGV
-	Query1(SGV gestao)
+	Query1(SGV gestao, char* files)
 	{
 		system("clear");
 		char* fileProd, *fileCli, *fileVendas;
-		char files[100];
 		VendasFactEFil auxStruct;
 
-		printf("Insira o nome dos 3 ficheiros separados unicamente por um espaço\n(ex.: fileProdutos.txt fileClientes.txt fileVendas.txt)\n\n");
-		fgets(files, 100, stdin);
-		strtok(files, "\n\r");
+		if(!strcmp(files, "\n\r"))
+		{
+			fileProd = NULL;
+			fileCli = NULL;
+			fileVendas = NULL;
+		}
+		else
+		{
+			strtok(files, "\n\r");
+			fileProd = strtok(files, " ");
+			fileCli = strtok(NULL, " ");
+			fileVendas = strtok(NULL, " ");
+		}
 
-		fileProd = strtok(files, " ");
-		fileCli = strtok(NULL, " ");
-		fileVendas = strtok(NULL, " ");
-		
-		printf("%s\n",fileProd);
-		printf("%s\n",fileCli);
-		printf("%s\n",fileVendas);
+		printf("Ficheiro de produtos: \"%s\", ",fileProd?fileProd:"Files/Produtos.txt");
+		printf("Ficheiro de clientes: \"%s\", ",fileCli?fileCli:"Files/Clientes.txt");
+		printf("Ficheiro de Vendas: \"%s\"\n",fileVendas?fileVendas:"Files/Vendas_1M.txt");
 
 		gestao->cp = criaCatalogoProdutos(gestao->cp, fileProd);
 
@@ -100,7 +112,20 @@ static SGV
 		for (int i = 0; i < NUMFILIAIS; ++i)
 			gestao->filiais[i] = GeraUmaFilial(auxStruct, i);
 
+		printf("(Prima ENTER para continuar...)"); getchar();
 		return gestao;
 	}
 
+static void
+	Query2(SGV gestao)
+	{
+		List_Produtos l;
+		char letra;
 
+		printf("Insira a inicial dos produto que pretende listar\n");
+		scanf("%c", &letra);
+		getchar();
+
+		l = listaPorLetraProdutos(gestao->cp, letra);
+		consultarProdutos(l);
+	}
