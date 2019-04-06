@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib.h>
+#include "Facturacao.h"
 #include "Queries.h"
 
 static int menu();
@@ -10,8 +11,8 @@ void
 	runQueries(SGV gestao)
 	{
 		gboolean flag = TRUE;
+		//gestao = Query1(gestao);
 
-		gestao = Query1(gestao);
 		do
 		{
 			switch(menu())
@@ -29,6 +30,8 @@ void
 				case 10: break;
 				case 11: break;
 				case 12: break;
+				case 0: flag = FALSE;
+						break;
 			}
 		}
 		while(flag);
@@ -60,6 +63,7 @@ static int
 			printf("Query 12 - \n");
 			printf("0 - Sair\n");
 			scanf("%d", &choice);
+			getchar();
 		}
 		while(choice < 0 && choice > 12);
 
@@ -76,6 +80,7 @@ static SGV
 
 		printf("Insira o nome dos 3 ficheiros separados unicamente por um espaço\n(ex.: fileProdutos.txt fileClientes.txt fileVendas.txt)\n\n");
 		fgets(files, 100, stdin);
+		strtok(files, "\n\r");
 
 		if(strcmp(files,"\n"))
 		{
@@ -88,12 +93,14 @@ static SGV
 			fileProd = strtok(files, " ");
 			fileCli = strtok(NULL, " ");
 			fileVendas = strtok(NULL, " ");
-			strtok(fileVendas, "\n\r");
 		}
+		printf("%s\n",fileProd);
+		printf("%s\n",fileCli);
+		printf("%s\n",fileVendas);
 
 		gestao->cp = criaCatalogoProdutos(gestao->cp, fileProd);
 
-		gestao->ccli = criaCatalogoClientes(gestao->ccli, fileCli);//segfault
+		gestao->ccli = criaCatalogoClientes(gestao->ccli, fileCli);
 
 		auxStruct = criaVendasDivididas(gestao->cp, gestao->ccli, fileVendas);
 
@@ -103,3 +110,5 @@ static SGV
 
 		return gestao;
 	}
+
+
