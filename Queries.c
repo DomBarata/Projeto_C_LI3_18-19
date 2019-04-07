@@ -15,7 +15,7 @@ static void Query4(SGV gestao);
 static void	Query5(SGV gestao);
 static void Query6(SGV gestao);
 static void Query7(SGV gestao);
-static void Query8(SGV gestao, char* meses);
+static void Query8(SGV gestao);
 
 static int comp(const void* p1, const void* p2);
 
@@ -25,7 +25,6 @@ void
 	{
 		gboolean flag = TRUE;
 		char files[100] = "";
-		char meses[10] = "";
 
 		gestao = Query1(gestao, files);
 
@@ -51,9 +50,7 @@ void
 						break;
 				case 7: Query7(gestao);
 						break;
-				case 8: printf("Indique de que mês a que mês pretende nhenhe (separados apenas por espaço): \n");
-						fgets(meses,10,stdin);
-						Query8(gestao,meses);
+				case 8: Query8(gestao);
 						break;
 				case 9: break;
 				case 10: break;
@@ -84,8 +81,8 @@ static int
 			printf("Query 4 - Consultar produtos nao comprados\n");
 			printf("Query 5 - Consultar clientes que fizeram compras em todas as filiais\n");
 			printf("Query 6 - Consultar clientes sem compras e produtos nunca comprados\n");
-			printf("Query 7 - Tabela com a quantidade de produtos comprados por um cliente\n");
-			printf("Query 8 - \n");
+			printf("Query 7 - Tabela de numero total de produtos comprados por determinado cliente\n");
+			printf("Query 8 - Consultar numero de vendas e totais faturados num intervalo de meses\n");
 			printf("Query 9 - \n");
 			printf("Query 10 - \n");
 			printf("Query 11 - \n");
@@ -386,68 +383,84 @@ static void
 		printf("(Prima ENTER para continuar...)"); getchar();
 	}
 
+static void
+	Query7(SGV gestao)
+	{
+		int somaMesFil[12][NUMFILIAIS], total = 0;
+		char codCli[10];
+		printf("Insira o código do cliente: \n");
+		scanf("%s", codCli);
+		getchar();
+
+		if(clienteExisteNoCatalogo(gestao->ccli, codCli))
+		{
+			
+			for(int j = 0; j < 12; j++)
+			{
+				for(int i = 0; i < NUMFILIAIS; i++)
+				{
+					somaMesFil[i][j] = quantidadeClienteMes(gestao->filiais[i], j, codCli);
+					total += somaMesFil[i][j];
+				}
+			}
+
+			printf("%s\t|%s|%s|%s\n", "MES", "    FILIAL 1   ", "    FILIAL 2   ", "     FILIAL 3   ");
+			for(int j = 0; j < 12; j++)
+				printf("%d\t|\t%d\t|\t%d\t|\t%d\n", j+1, somaMesFil[0][j], somaMesFil[1][j], somaMesFil[2][j]);
+			printf("\nO Cliente %s comprou %d produtos no total\n", codCli, total);
+		}
+		else
+		{
+			printf("O código inserido não existe no catálogo!\n");
+		}
+		printf("(Prima ENTER para continuar...)"); getchar();
+	}
+
+
+static void 
+	Query8(SGV gestao)
+	{	
+		system("clear");
+		int min = 0, max = 0;
+		char* mes1, *mes2;
+		char meses[6];
+		int somaQtd = 0;
+		double somaPreco = 0;
+		double** totais;
+
+		printf("Query 8 - Consultar numero de vendas e totais faturados num intervalo de meses\n\n");
+		printf("Indique o intervalo de tempo(meses) em que deseja ver a facturacao(separado por 1 espaco): \n");
+		fgets(meses,6,stdin);
+
+		mes1 = strtok(meses," ");
+		mes2 = strtok(NULL," ");
+
+		min = atoi(mes1);
+		max = atoi(mes2);
+
+		if(min>max)
+		{
+			max += min;
+			min = max - min;
+			max -= min;
+		}
+
+		for (int i = min; i <= max; ++i)
+		{
+			totais = getTotalFacturado(gestao->fact, i, NULL);
+			somaQtd += (int)totais[0][0];
+			somaPreco += totais[1][0];
+
+			printf("No mês %d, venderam-se %d produtos, e faturou-se %.2fEUR\n", i, (int)totais[0][0], totais[1][0]);
+		}
+		printf("Entre o mês %d e %d, venderam-se %d produtos, e faturou-se %.2fEUR\n", min, max, somaQtd, somaPreco);
+		printf("(Prima ENTER para continuar...)"); getchar();
+	}
+
 static int 
 	comp(const void* p1, const void* p2)
 	{
 		int size = strcmp(* (char * const *) p1, * (char * const *) p2);
 
 		return size;
-	}
-
-static void
-	Query7(SGV gestao)
-	{
-		char codCli[10] = "";
-		printf("Insira o código do cliente: \n");
-		fgets(codCli,10,stdin);
-
-	if(clienteExisteNoCatalogo(gestao->ccli, codCli)){
-		int somaMesFil[12][3];
-		for(int j=0; j<12; j++)
-		{
-			for(int i=0; i<3; i++)
-			{
-				somaMesFil[j][i] = prodsClienteMes(gestao->filiais[i], j, codCli);
-			}
-		}
-
-		printf("Número total de produtos comprados pelo cliente %s:\n", codCli);
-		for(int i=0; i<3; i++)
-		{
-			for(int j=0; j<12; j++)
-			{	
-				if(j<11)
-					printf("%d---", somaMesFil[j][i]);
-				else
-					printf("%d", somaMesFil[j][i]);
-			}
-			printf("\n");
-		}
-		getchar();
-	}else{
-		printf("O código inserido não existe no catálogo!\n");
-		getchar();
-	}
-	}
-
-
-static void 
-	Query8(SGV gestao, char* meses)
-	{	
-		char* mes1, *mes2;
-		mes1 = strtok(meses," ");
-		mes2 = strtok(NULL," ");
-
-		int m1 = 0, m2 = 0;
-		m1 = atoi(mes1);
-		m2 = atoi(mes2);
-			printf("%d\n", m1);
-			printf("%d\n", m2);
-
-		int totalVendas = 0, j = 0;
-		for(int i=m1; i<m2; i++){
-				printf("%d\n", i);
-			totalVendas += totalVendasRegistadas(gestao->fact, i);
-		}
-
 	}

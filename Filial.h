@@ -7,6 +7,6 @@ typedef struct filMes* Filial;
 
 Filial inicializaFilial();
 Filial insereFilial(VendaUnica v, Filial fil);
-int prodsClienteMes(Filial fil, int mes, char* codCli);
+int	quantidadeClienteMes(Filial fil, int m, char* codCli);
 
 #endif

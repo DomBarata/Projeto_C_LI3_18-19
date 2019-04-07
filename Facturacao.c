@@ -94,22 +94,23 @@ int**
 		soma[FALSE] = malloc(sizeof(int) * NUMFILIAIS);
 		soma[TRUE] = malloc(sizeof(int) * NUMFILIAIS);
 
-		for (int i = 0; i < NUMFILIAIS; ++i)
-		{
-			soma[FALSE][i] = 0;
-			soma[TRUE][i] = 0;
-		}
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				soma[FALSE][i] = 0;
+				soma[TRUE][i] = 0;
+			}
 
-		informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
-		informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
+			informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
+			informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
 
-		for (int i = 0; i < NUMFILIAIS; ++i)
-		{
-			if(informacao[FALSE])
-				soma[FALSE][i] = informacao[FALSE]->qtd[i];
-			if(informacao[TRUE])
-			soma[TRUE][i] = informacao[TRUE]->qtd[i];
-		}
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				if(informacao[FALSE])
+					soma[FALSE][i] = informacao[FALSE]->qtd[i];
+				if(informacao[TRUE])
+				soma[TRUE][i] = informacao[TRUE]->qtd[i];
+			}
+
 		
 		return soma;
 	}
@@ -118,47 +119,71 @@ double**
 	getTotalFacturado(Facturacao f, int m, char* cod)
 	{
 		Numeros informacao[2];
+		GList* ptrFalse, *ptrTrue;
+		Numeros a, b;
 		double** soma = malloc(sizeof(double*) * 2);
-		soma[FALSE] = malloc(sizeof(double) * NUMFILIAIS);
-		soma[TRUE] = malloc(sizeof(double) * NUMFILIAIS);
-
-		for (int i = 0; i < NUMFILIAIS; ++i)
+		
+		if(cod)
 		{
-			soma[FALSE][i] = 0;
-			soma[TRUE][i] = 0;
+			soma[FALSE] = malloc(sizeof(double) * NUMFILIAIS);
+			soma[TRUE] = malloc(sizeof(double) * NUMFILIAIS);
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				soma[FALSE][i] = 0;
+				soma[TRUE][i] = 0;
+			}
+
+			informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
+			informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
+
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				if(informacao[FALSE])
+					soma[FALSE][i] = informacao[FALSE]->precoTotal[i];
+				if(informacao[TRUE])
+					soma[TRUE][i] = informacao[TRUE]->precoTotal[i];
+			}
 		}
-
-		informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
-		informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
-
-		for (int i = 0; i < NUMFILIAIS; ++i)
+		else
 		{
-			if(informacao[FALSE])
-				soma[FALSE][i] = informacao[FALSE]->precoTotal[i];
-			if(informacao[TRUE])
-				soma[TRUE][i] = informacao[TRUE]->precoTotal[i];
+			soma[FALSE] = malloc(sizeof(double) * 1);
+			soma[TRUE] = malloc(sizeof(double) * 1);
+			soma[FALSE][0] = 0;	//Quantidades
+			soma[TRUE][0] = 0;	//Faturado
+			Numeros emBranco = malloc(sizeof(struct numeros));
+
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				emBranco->qtd[i] = 0;
+				emBranco->precoTotal[i] = 0;
+			}
+
+			ptrFalse = g_hash_table_get_values(f->mes[m-1]->ePromo[FALSE]->info);
+			ptrTrue = g_hash_table_get_values(f->mes[m-1]->ePromo[TRUE]->info);
+
+			while(ptrFalse || ptrTrue)
+			{
+				if(ptrFalse)
+					a = (Numeros) ptrFalse->data;
+				else
+					a = emBranco;
+				if(ptrTrue)
+					b = (Numeros) ptrTrue->data;
+				else
+					a = emBranco;
+
+				for (int i = 0; i < NUMFILIAIS; ++i)
+				{
+					soma[FALSE][0] += a->qtd[i] + b->qtd[i];
+					soma[TRUE][0] += a->precoTotal[i] + b->precoTotal[i];
+				}
+				if(ptrFalse)
+					ptrFalse = ptrFalse->next;
+
+				if(ptrTrue)
+					ptrTrue = ptrTrue->next;
+			}
 		}
 
 		return soma;
 	}
-
-
-int
-	totalVendasRegistadas(Facturacao f, int i)
-	{return getTamanhoListaFactMes(f, i);}
-
-int
-	getTamanhoListaFactMes(Facturacao f, int m)
-	{
-		int total = 0;
-		int* tamN = malloc(sizeof(int));
-		int* tamP = malloc(sizeof(int));
-
-		*tamN = g_hash_table_size(f->mes[m]->ePromo[0]->info);
-		*tamP = g_hash_table_size(f->mes[m]->ePromo[1]->info);
-
-		total = *tamN+*tamP;
-
-		return total;
-	}
-
