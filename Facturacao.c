@@ -1,21 +1,20 @@
+#include <glib.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "Facturacao.h"
-
-#define NUMFILIAIS 3
-
-struct numeros
-{
-	int qtd[NUMFILIAIS];
-	double precoTotal[NUMFILIAIS];
-};
-typedef struct numeros* Numeros;
 
 struct cp
 {
 	GHashTable* info;
 };
 typedef struct cp* Fact_Info;
+
+struct numeros
+{
+	int qtd;
+	double preco;
+};
+typedef struct numeros* Numeros;
 
 struct promocao
 {
@@ -28,6 +27,8 @@ struct fact
 	Promo mes[12];
 };
 
+static double getPrecoTotal(Numeros n);
+static void getValorFaturado(gpointer key, gpointer value, gpointer userdata);
 static Fact_Info insereInfo(VendaUnica v, Fact_Info f);
 
 Facturacao
@@ -38,10 +39,10 @@ Facturacao
 		for (int i = 0; i < 12; ++i)
 		{
 			f->mes[i] = malloc(sizeof(struct promocao));
-			f->mes[i]->ePromo[FALSE] = malloc(sizeof(struct cp));
-			f->mes[i]->ePromo[FALSE]->info = g_hash_table_new(g_str_hash, g_str_equal);
-			f->mes[i]->ePromo[TRUE] = malloc(sizeof(struct cp));
-			f->mes[i]->ePromo[TRUE]->info = g_hash_table_new(g_str_hash, g_str_equal);
+			f->mes[i]->ePromo[0] = malloc(sizeof(struct cp));
+			f->mes[i]->ePromo[0]->info = g_hash_table_new(g_str_hash, g_str_equal);
+			f->mes[i]->ePromo[1] = malloc(sizeof(struct cp));
+			f->mes[i]->ePromo[1]->info = g_hash_table_new(g_str_hash, g_str_equal);
 		}
 		return f;
 	}
@@ -49,10 +50,12 @@ Facturacao
 Facturacao
 	insereNovaFacturacao(VendaUnica v, Facturacao f)
 	{
+		int pos = getMesVendas(v)-1;
+
 		if(strcmp(getTipoVendas(v), "N") == 0)
-			f->mes[getMesVendas(v)-1]->ePromo[FALSE] = insereInfo(v, f->mes[getMesVendas(v)-1]->ePromo[FALSE]);
+			f->mes[pos]->ePromo[0] = insereInfo(v, f->mes[pos]->ePromo[0]);
 		else
-			f->mes[getMesVendas(v)-1]->ePromo[TRUE] = insereInfo(v, f->mes[getMesVendas(v)-1]->ePromo[TRUE]);
+			f->mes[pos]->ePromo[1] = insereInfo(v, f->mes[pos]->ePromo[1]);
 
 		return f;
 	}
@@ -64,81 +67,82 @@ static Fact_Info
 		char* key;
 		key = getCodProdVendas(v);
 		n = g_hash_table_lookup(f->info, key);//segfault here
-		if(!n)
+		if(n == NULL)
 		{
 			n = malloc(sizeof(struct numeros));
-			for (int i = 0; i < NUMFILIAIS; ++i)
-			{
-				n->qtd[i] = 0;
-				n->precoTotal[i] = 0;
-			}
+			n->qtd = getQuantidadeVendas(v);
+			n->preco = getprecoUnitVendas(v);
 
-			n->qtd[getFilialVendas(v)-1] = getQuantidadeVendas(v);
-			n->precoTotal[getFilialVendas(v)-1] = getprecoUnitVendas(v) * getQuantidadeVendas(v);
-			
+
 			g_hash_table_insert(f->info, key, n);
 		}
 		else
 		{
-			n->qtd[getFilialVendas(v)-1] += getQuantidadeVendas(v);
-			n->precoTotal[getFilialVendas(v)-1] += getprecoUnitVendas(v) * getQuantidadeVendas(v);
+			n->qtd += getQuantidadeVendas(v);
+			n->preco += getprecoUnitVendas(v);
 		}
 		return f;
 	}
 
-int**
-	getNumeroVendas(Facturacao f, int m, char* cod)
+int
+	getTamanhoListaFactMes(Facturacao f, int m)
 	{
-		Numeros informacao[2];
-		int** soma = malloc(sizeof(int*) * 2);
-		soma[FALSE] = malloc(sizeof(int) * NUMFILIAIS);
-		soma[TRUE] = malloc(sizeof(int) * NUMFILIAIS);
+		int total = 0;
+		int* tamN = malloc(sizeof(int));
+		int* tamP = malloc(sizeof(int));
 
-		for (int i = 0; i < NUMFILIAIS; ++i)
-		{
-			soma[FALSE][i] = 0;
-			soma[TRUE][i] = 0;
-		}
+		*tamN = g_hash_table_size(f->mes[m]->ePromo[0]->info);
+		*tamP = g_hash_table_size(f->mes[m]->ePromo[1]->info);
 
-		informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
-		informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
+		total = *tamN+*tamP;
 
-		for (int i = 0; i < NUMFILIAIS; ++i)
-		{
-			if(informacao[FALSE])
-				soma[FALSE][i] = informacao[FALSE]->qtd[i];
-			if(informacao[TRUE])
-			soma[TRUE][i] = informacao[TRUE]->qtd[i];
-		}
-		
-		return soma;
+		return total;
 	}
 
-double**
-	getTotalFacturado(Facturacao f, int m, char* cod)
+double
+	totalFaturadoMes(Facturacao f, int m)
 	{
-		Numeros informacao[2];
-		double** soma = malloc(sizeof(double*) * 2);
-		soma[FALSE] = malloc(sizeof(double) * NUMFILIAIS);
-		soma[TRUE] = malloc(sizeof(double) * NUMFILIAIS);
+		void *t;
+		double* total;
+		tam = g_hash_table_size(f->mes[m]->ePromo[0]->info);
+		for(int i=0;i<tam;i++){
 
-		for (int i = 0; i < NUMFILIAIS; ++i)
-		{
-			soma[FALSE][i] = 0;
-			soma[TRUE][i] = 0;
+			getValorFaturado(g_hash_table_lookup(f->mes[m]->ePromo[0]->info))
 		}
+		total = (double*)t;
 
-		informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
-		informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
-
-		for (int i = 0; i < NUMFILIAIS; ++i)
-		{
-			if(informacao[FALSE])
-				soma[FALSE][i] = informacao[FALSE]->precoTotal[i];
-			if(informacao[TRUE])
-				soma[TRUE][i] = informacao[TRUE]->precoTotal[i];
-		}
-
-		return soma;
+		return *total;
 	}
+
+static void 
+	getValorFaturado(Numeros n)
+	{
+		return total = n->preco * n->qtd;
+	}
+
+
+char**
+	getKeysFact(Facturacao fact)
+	{
+		void** array = malloc(sizeof(void**));
+		char** arrayFact = malloc(sizeof(char**));
+		guint* tam = malloc(sizeof(guint));
+		int count = 0;
+
+		for(int i=0; i<12; i++){
+			for(int j=0; j<2; j++){
+				*tam = g_hash_table_size(fact->mes[i]->ePromo[j]->info);
+
+				array = g_hash_table_get_keys_as_array(fact->mes[i]->ePromo[j]->info,tam);
+				count++;
+			}
+		}
+		arrayFact = (char**)array;
+
+		return arrayFact;
+	}
+
+
+
+
 
