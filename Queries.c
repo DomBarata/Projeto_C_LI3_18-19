@@ -14,7 +14,8 @@ static void Query3(SGV gestao);
 static void Query4(SGV gestao);
 static void	Query5(SGV gestao);
 static void Query6(SGV gestao);
-static void Query8(SGV gestao, char* meses)
+static void Query7(SGV gestao);
+static void Query8(SGV gestao, char* meses);
 
 static int comp(const void* p1, const void* p2);
 
@@ -48,7 +49,8 @@ void
 						break;
 				case 6: Query6(gestao);
 						break;
-				case 7: break;
+				case 7: Query7(gestao);
+						break;
 				case 8: printf("Indique de que mês a que mês pretende nhenhe (separados apenas por espaço): \n");
 						fgets(meses,10,stdin);
 						Query8(gestao,meses);
@@ -82,7 +84,7 @@ static int
 			printf("Query 4 - Consultar produtos nao comprados\n");
 			printf("Query 5 - Consultar clientes que fizeram compras em todas as filiais\n");
 			printf("Query 6 - Consultar clientes sem compras e produtos nunca comprados\n");
-			printf("Query 7 - \n");
+			printf("Query 7 - Tabela com a quantidade de produtos comprados por um cliente\n");
 			printf("Query 8 - \n");
 			printf("Query 9 - \n");
 			printf("Query 10 - \n");
@@ -392,6 +394,43 @@ static int
 		return size;
 	}
 
+static void
+	Query7(SGV gestao)
+	{
+		char codCli[10] = "";
+		printf("Insira o código do cliente: \n");
+		fgets(codCli,10,stdin);
+
+	if(clienteExisteNoCatalogo(gestao->ccli, codCli)){
+		int somaMesFil[12][3];
+		for(int j=0; j<12; j++)
+		{
+			for(int i=0; i<3; i++)
+			{
+				somaMesFil[j][i] = prodsClienteMes(gestao->filiais[i], j, codCli);
+			}
+		}
+
+		printf("Número total de produtos comprados pelo cliente %s:\n", codCli);
+		for(int i=0; i<3; i++)
+		{
+			for(int j=0; j<12; j++)
+			{	
+				if(j<11)
+					printf("%d---", somaMesFil[j][i]);
+				else
+					printf("%d", somaMesFil[j][i]);
+			}
+			printf("\n");
+		}
+		getchar();
+	}else{
+		printf("O código inserido não existe no catálogo!\n");
+		getchar();
+	}
+	}
+
+
 static void 
 	Query8(SGV gestao, char* meses)
 	{	
@@ -409,7 +448,6 @@ static void
 		for(int i=m1; i<m2; i++){
 				printf("%d\n", i);
 			totalVendas += totalVendasRegistadas(gestao->fact, i);
-			totalFact +=
 		}
 
 	}
