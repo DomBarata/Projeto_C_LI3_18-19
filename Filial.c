@@ -6,91 +6,75 @@
 #include "VendaUnica.h"
 
 //struct hashtable de key codigo de cliente
-struct movimentos
+struct prodsCli
 {
   GHashTable* clis;
   GHashTable* prods;
 };
+typedef struct prodsCli* ProdsCli;
 
-//struct valor hashtable do codigo de produtos, QuantidadeProd do produto
-struct valueProd
+struct filMes
 {
-  int QuantidadeProd;
+	ProdsCli mes[12];
 };
 
 Filial inicializaFilial(){
-	Filial hashGeral = malloc(sizeof(struct movimentos));
+	Filial fil = malloc(sizeof(struct filMes));
 
-	hashGeral->clis = g_hash_table_new(g_str_hash, g_str_equal);
-	hashGeral->prods = g_hash_table_new(g_str_hash, g_str_equal);
+	for(int i=0; i<12; i++){
+		fil->mes[i] = malloc(sizeof(struct prodsCli));
+		fil->mes[i]->clis = g_hash_table_new(g_str_hash, g_str_equal);
+		fil->mes[i]->prods = g_hash_table_new(g_str_hash, g_str_equal);
+	}
 
-	g_hash_table_insert(hashGeral->clis, "", hashGeral->prods);
-
-	return hashGeral;
+	return fil;
 }
 
 Filial insereFilial(VendaUnica v, Filial fil){
 	int* ptrQ = malloc(sizeof(int));
 	*ptrQ = getQuantidadeVendas(v);
-	QuantidadeProd value;
-	value = g_hash_table_lookup(fil->clis,getCodCliVendas(v));
+	int pos = getMesVendas(v)-1;
+	ProdsCli value = malloc(sizeof(struct prodsCli));
+	value = g_hash_table_lookup(fil->mes[pos]->clis,getCodCliVendas(v));
+	int* valorProd;
 
 	if(value==NULL){
-		g_hash_table_insert(fil->prods,getCodProdVendas(v),ptrQ);
-		g_hash_table_insert(fil->clis,getCodCliVendas(v),fil->prods);
+		g_hash_table_insert(fil->mes[pos]->prods,getCodProdVendas(v),ptrQ);
+		g_hash_table_insert(fil->mes[pos]->clis,getCodCliVendas(v),fil->mes[pos]->prods);
 	}
 	else{
-		value = g_hash_table_lookup(fil->prods,getCodProdVendas(v));
-		if(value==NULL){
-			g_hash_table_insert(fil->prods,getCodProdVendas(v),ptrQ);
+		valorProd = g_hash_table_lookup(fil->mes[pos]->prods,getCodProdVendas(v));
+		if(valorProd==NULL){
+			g_hash_table_insert(fil->mes[pos]->prods,getCodProdVendas(v),ptrQ);
 		}
 		else{
-			value->QuantidadeProd += getQuantidadeVendas(v);
+			*valorProd += getQuantidadeVendas(v);
 		}
 	}
 	return fil;
 }
 
-/*
-//faz listagefil apenas de ufil cliente
-GList* listagefilProds(Filial fil){
-	GList* array;
-	guint* tafil= filalloc(sizeof(guint*));
-	*tafil = g_hash_table_size(fil->prods);
+int
+	prodsClienteMes(Filial fil, int m, char* codCli)
+	{
+		ProdsCli produtosComprados = malloc(sizeof(struct prodsCli));
+		GList* values;
+		int soma = 0;
 
-	array = g_hash_table_get_values(fil->prods);
+		produtosComprados->prods = g_hash_table_lookup(fil->mes[m]->clis,codCli);
 
-	return array;
-} 
+		if(produtosComprados->prods != NULL){
+			values = g_hash_table_get_values(produtosComprados->prods);
 
-static GCofilpareFunc cofilparaKeyCliente(const void* str1, const void* str2){
-	return strcfilp((char*)str1,(char*)str2);
+			while(values)
+			{	
+				soma += *(int*)values->data;
+				values = values->next;
+			}
+		}
+		else{
+			printf("ok\n");
+		}
 
-}
-
-char** listaClientesOrdenada(Filial fil){
-	void** array;
-	char** arrayFinal= filalloc(sizeof(char**));
-	guint* tafil= filalloc(sizeof(guint*));
-	*tafil = g_hash_table_size(fil->clis);
-
-	array = g_hash_table_get_keys_as_array(fil->clis,tafil);
-	arrayFinal = (char**)array;
-
-	qsort(arrayFinal, tafil, sizeof(char *), cfilpstringp);
-
-	return arrayFinal;
-
-}
-
-static int cfilpstringp(const void *str1, const void *str2)
-{
-	return strcfilp(* (char * const *) getCodProd((char*)str1), * (char * const *) getCodProd((char*)str2));
-}
-
-
-
-int totalClientesProdutos(Filial fil){
-
-}
-*/
+		return soma;
+	}
