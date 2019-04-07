@@ -9,6 +9,10 @@ static int menu();
 static SGV Query1(SGV gestao, char* files);
 static void Query2(SGV gestao);
 static void Query3(SGV gestao);
+static void Query4(SGV gestao);
+
+static int comp(const void* p1, const void* p2);
+
 
 void
 	runQueries(SGV gestao)
@@ -30,7 +34,8 @@ void
 						break;
 				case 3: Query3(gestao);
 						break;
-				case 4: break;
+				case 4: Query4(gestao);
+						break;
 				case 5: break;
 				case 6: break;
 				case 7: break;
@@ -61,7 +66,7 @@ static int
 			printf("Query 1 - Fazer leitura de outros ficheiros de dados\n");
 			printf("Query 2 - Consulta produtos do catalogo\n");
 			printf("Query 3 - Consulta vendas de produtos\n");
-			printf("Query 4 - \n");
+			printf("Query 4 - Produtos nao comprados\n");
 			printf("Query 5 - \n");
 			printf("Query 6 - \n");
 			printf("Query 7 - \n");
@@ -199,4 +204,71 @@ static void
 			}
 		}
 		printf("(Prima ENTER para continuar...)"); getchar();
+	}
+
+static void
+	Query4(SGV gestao)
+	{
+		int check, j = 0;
+		char*** array; //[Filial][indice][string]
+		char** codNunca;
+		int total[NUMFILIAIS];
+
+		printf("Apresentar resultados:\n");
+		printf("\t 1 - Todos as filiais\n");
+		printf("\t 2 - Filial a Filial\n");
+		scanf("%d", &check);
+		getchar();
+
+				
+		if (check-1 == 0) //Total
+		{
+			codNunca = codigosNenhumaFilial(gestao->cp);
+			while(codNunca[j])
+					j++;
+			printf("%d\n", j);
+			qsort(codNunca, j, sizeof(char*), comp);	
+		
+			j = 0;
+			while(codNunca[j])
+			{
+				printf("%s\n", codNunca[j]);
+				j++;
+			}
+		}
+		else //Filial
+		{
+			array = listaProdutosNaoComprados(gestao->cp);
+
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				j=0;
+				while(array[i][j])
+					j++;
+
+				total[i] = j;
+				qsort(array[i], j, sizeof(char*), comp);
+			}
+
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				printf("-----FILIAL %d-----\n", i+1);
+				j = 0;
+				while(array[i][j])
+				{
+					printf("%s\n", array[i][j]);
+					j++;
+				}
+				getchar();
+			}
+		}
+		printf("(Prima ENTER para continuar...)"); getchar();
+	}
+
+static int 
+	comp(const void* p1, const void* p2)
+	{
+		int size = strcmp(* (char * const *) p1, * (char * const *) p2);
+
+		return size;
 	}

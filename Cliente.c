@@ -43,7 +43,12 @@ gboolean
 	}
 
 Cliente
-	setFilialCompra(Cliente c, int fil) {c->filialCompra[fil-1] = TRUE;}
+	setFilialCompra(Cliente c, int fil) 
+	{
+		c->filialCompra[fil-1] = TRUE;
+
+		return c;
+	}
 
 void //Esta funcao envia para o utilizador o cliente
 	printCliente(Cliente c)	{printf("%s\n", c->cliente);}

@@ -6,6 +6,7 @@
 #include "List_Produtos.h"
 
 #define PAGINACAO 25
+#define NUMFILIAIS 3
 
 struct listaProdutos
 {
@@ -82,6 +83,79 @@ gboolean
 int 
 	dimensaoLista(List_Produtos l)
 	{return l->tam;}
+
+char***
+	descobreProdutos(char*** filiaisEmBranco, List_Produtos l)
+	{
+		char *valueKey;
+		GList* valores; 
+		gboolean* array;
+		int pos = 0;
+
+		if(!filiaisEmBranco[0])
+		{
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				filiaisEmBranco[i] = malloc(sizeof(char*));
+				filiaisEmBranco[i][0] = NULL;
+			}
+		}
+
+		valores = g_hash_table_get_values(l->produtos);
+
+		while(valores)
+		{
+			valueKey = getCodProd((Produto)valores->data);
+			array = getFilialVenda((Produto)valores->data);
+
+			for (int i = 0; i < NUMFILIAIS; ++i)
+			{
+				if(!array[i])
+				{ 	
+					pos = 0;
+					while(filiaisEmBranco[i][pos])
+						pos++;
+
+					filiaisEmBranco[i] = realloc(filiaisEmBranco[i], ((pos+2) * sizeof(char*)));
+					filiaisEmBranco[i][pos] = g_strdup(valueKey);
+					filiaisEmBranco[i][pos+1] = NULL;
+				}
+			}
+			valores = valores->next;
+		}
+
+		return filiaisEmBranco;
+	}
+char**
+	produtosNuncaComprados(char** codNunca, List_Produtos l)
+	{
+		char *valueKey;
+		GList* valores; 
+		gboolean* array;
+		int pos = 0;
+
+		valores = g_hash_table_get_values(l->produtos);
+
+		while(codNunca[pos])
+			pos++;
+
+		while(valores)
+		{
+			valueKey = getCodProd((Produto)valores->data);
+			array = getFilialVenda((Produto)valores->data);
+
+			if((array[0] == FALSE) && (array[1] == FALSE) && (array[2] == FALSE))
+			{
+				codNunca = realloc(codNunca, sizeof(char*) * (pos+2));
+				codNunca[pos] = g_strdup(valueKey);	
+				codNunca[pos+1] = NULL;	
+				pos++;		
+			}
+			valores = valores->next;
+		}
+printf("%d\n", pos);
+		return codNunca;
+	}
 
 static int 
 	comp(const void* p1, const void* p2)

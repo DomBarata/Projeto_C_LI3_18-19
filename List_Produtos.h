@@ -17,6 +17,10 @@ List_Produtos setList_Produtos(List_Produtos l, char* prod, int fil);
 //Print no ecra de uma lista ORDENADA de produtos
 void consultarProdutos(List_Produtos l);
 
+char*** descobreProdutos(char*** filiaisEmBranco, List_Produtos l);
+
+char** produtosNuncaComprados(char** codNunca, List_Produtos l);
+
 //Funcao que dada uma lista, verifica se o codigo do produto esta inserido
 gboolean produtoExisteNaLista(List_Produtos l, char* codProd);
 

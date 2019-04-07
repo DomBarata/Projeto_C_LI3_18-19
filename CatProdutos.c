@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "CatProdutos.h"
 
+#define NUMFILIAIS 3
 
 struct catProds
 {
@@ -54,4 +55,35 @@ gboolean
 		List_Produtos l = listaPorLetraProdutos(catp, cod[0]);
 
 		return produtoExisteNaLista(l, cod);
+	}
+
+char***
+	listaProdutosNaoComprados(CatProdutos catp)
+	{
+		int i;
+		char*** filiaisEmBranco = (char***)malloc(sizeof(char**) * NUMFILIAIS);
+		
+		for (i = 0; i < NUMFILIAIS; ++i)
+		{
+			filiaisEmBranco[i] = NULL;
+		}
+
+
+		for(i = 0; i < 26; i++)
+			filiaisEmBranco = descobreProdutos(filiaisEmBranco, catp->lista[i]);
+
+		return filiaisEmBranco;
+	}
+
+char**
+	codigosNenhumaFilial(CatProdutos catp)
+	{
+		int i;
+		char** codNunca = malloc(sizeof(char*));
+		codNunca[0] = NULL;
+
+		for(i = 0; i < 26; i++)
+			codNunca = produtosNuncaComprados(codNunca, catp->lista[i]);
+
+		return codNunca;
 	}
