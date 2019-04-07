@@ -26,7 +26,7 @@ CatProdutos
 	{
 		FILE* fp;
 		char str[BUFFER];
-		int linhasLidas = 0, linhasValidas = 0;
+		int linhasLidas = 0;
 		Produto p;
 
 		if(fileRead == NULL)
@@ -46,14 +46,11 @@ CatProdutos
 				strtok(str, "\n\r");
 				p = criaProduto(str);
 				if(verificaProduto(p))
-				{
-					catp = insereProdutos(catp, p);		
-					linhasValidas++;	
-				}
+					catp = insereProdutos(catp, p);	
 				linhasLidas++;
 			}
 			fclose(fp);
-			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
+			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, getProdutosLidos(catp));
 
 		}
 		return catp;
@@ -64,7 +61,7 @@ CatClientes
 	{
 		FILE* fp;
 		char str[BUFFER];
-		int linhasLidas = 0, linhasValidas = 0;
+		int linhasLidas = 0;
 		Cliente c;
 
 		if(fileRead == NULL)
@@ -84,14 +81,11 @@ CatClientes
 				strtok(str, "\n\r");
 				c = criaCliente(str);
 				if(verificaCliente(c))
-				{
-					catc = insereClientes(catc, c);		
-					linhasValidas++;	
-				}
+					catc = insereClientes(catc, c);			
 				linhasLidas++;
 			}
 			fclose(fp);
-			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, linhasValidas);
+			printf("Do ficheiro \"%s\" foram lidas %d linhas, sendo %d validas\n", fileRead, linhasLidas, getClientesLidos(catc));
 		}
 		return catc;
 	}

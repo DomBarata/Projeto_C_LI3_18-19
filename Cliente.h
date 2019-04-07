@@ -12,6 +12,7 @@ Cliente criaCliente(char* codCli);
 char* getCodCli(Cliente c);
 
 Cliente	setFilialCompra(Cliente c, int fil);
+gboolean* getFilialCompra(Cliente c);
 
 //Funcao que verifica semanticamente o codigo do cliente
 gboolean verificaCliente(Cliente codigo);

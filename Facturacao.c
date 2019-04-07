@@ -94,12 +94,20 @@ int**
 		soma[FALSE] = malloc(sizeof(int) * NUMFILIAIS);
 		soma[TRUE] = malloc(sizeof(int) * NUMFILIAIS);
 
+		for (int i = 0; i < NUMFILIAIS; ++i)
+		{
+			soma[FALSE][i] = 0;
+			soma[TRUE][i] = 0;
+		}
+
 		informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
 		informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
 
 		for (int i = 0; i < NUMFILIAIS; ++i)
 		{
-			soma[FALSE][i] = informacao[FALSE]->qtd[i];
+			if(informacao[FALSE])
+				soma[FALSE][i] = informacao[FALSE]->qtd[i];
+			if(informacao[TRUE])
 			soma[TRUE][i] = informacao[TRUE]->qtd[i];
 		}
 		
@@ -114,13 +122,21 @@ double**
 		soma[FALSE] = malloc(sizeof(double) * NUMFILIAIS);
 		soma[TRUE] = malloc(sizeof(double) * NUMFILIAIS);
 
+		for (int i = 0; i < NUMFILIAIS; ++i)
+		{
+			soma[FALSE][i] = 0;
+			soma[TRUE][i] = 0;
+		}
+
 		informacao[FALSE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[FALSE]->info, cod);
 		informacao[TRUE] =  g_hash_table_lookup(f->mes[m-1]->ePromo[TRUE]->info, cod);
 
 		for (int i = 0; i < NUMFILIAIS; ++i)
 		{
-			soma[FALSE][i] = informacao[FALSE]->precoTotal[i];
-			soma[TRUE][i] = informacao[TRUE]->precoTotal[i];
+			if(informacao[FALSE])
+				soma[FALSE][i] = informacao[FALSE]->precoTotal[i];
+			if(informacao[TRUE])
+				soma[TRUE][i] = informacao[TRUE]->precoTotal[i];
 		}
 
 		return soma;

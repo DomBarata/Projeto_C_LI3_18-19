@@ -11,7 +11,6 @@
 struct listaProdutos
 {
 	GHashTable* produtos;
-	int tam;
 };
 
 static int comp(const void* p1, const void* p2);
@@ -21,7 +20,6 @@ List_Produtos
 	{
 		List_Produtos l = malloc(sizeof(struct listaProdutos));
 		l->produtos = g_hash_table_new(g_str_hash, g_str_equal);
-		l->tam = 0;
 		return l;
 	}
 
@@ -29,7 +27,6 @@ List_Produtos
 	insereUmProduto(List_Produtos l, Produto p)
 	{
  		g_hash_table_insert(l->produtos, getCodProd(p), p);
- 		l->tam ++;
 
 	    return l;
 	}
@@ -50,7 +47,7 @@ void
 	{
 		void** array;
 		char** arrayFinal;
-		int i = 0, pag = 1;
+		int i = 0, j = 0, pag = 1;
 		int arraySize;
 		guint* tam = malloc(sizeof(guint));
 		
@@ -65,14 +62,15 @@ void
 		while(arrayFinal[i])
 		{
 			system("clear");
-			printf("Pagina %d de %d\n", pag, (l->tam / PAGINACAO)+1);
-			for(int j = 0; j < PAGINACAO && arrayFinal[i]; j++)
+			j = 0;
+			while(j < PAGINACAO && arrayFinal[i])
 			{
 				printf("%s\n", arrayFinal[i]);	
 				i++;
+				j++;
 			}
+			printf("Pagina %d de %d\n", pag, (arraySize/ PAGINACAO)+1); getchar();
 			pag++;
-			printf("Prima ENTER para passar a pagina seguinte"); getchar();
 		}
 	}
 
@@ -81,8 +79,11 @@ gboolean
 	{return g_hash_table_contains(l->produtos, codProd);}
 
 int 
-	dimensaoLista(List_Produtos l)
-	{return l->tam;}
+	getDimensaoLista(List_Produtos l)
+	{
+		guint dim = g_hash_table_size(l->produtos);
+		return dim;
+	}
 
 char***
 	descobreProdutos(char*** filiaisEmBranco, List_Produtos l)
@@ -153,9 +154,9 @@ char**
 			}
 			valores = valores->next;
 		}
-printf("%d\n", pos);
 		return codNunca;
 	}
+
 
 static int 
 	comp(const void* p1, const void* p2)

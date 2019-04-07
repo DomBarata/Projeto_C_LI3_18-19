@@ -15,9 +15,7 @@ Cliente
 		Cliente c = malloc(sizeof(struct cli));
 		c->cliente = g_strdup(codCli);
 		for (int i = 0; i < 3; ++i)
-		{
 			c->filialCompra[i] = 0;
-		}
 
 		return c;
 	}
@@ -49,6 +47,9 @@ Cliente
 
 		return c;
 	}
+gboolean*
+	getFilialCompra(Cliente c)
+	{return c->filialCompra;}
 
 void //Esta funcao envia para o utilizador o cliente
 	printCliente(Cliente c)	{printf("%s\n", c->cliente);}

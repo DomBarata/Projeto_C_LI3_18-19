@@ -69,6 +69,36 @@ gboolean
 	clienteExisteNaLista(List_Clientes l, char* codCli)	
 	{return g_hash_table_contains(l->clientes, codCli);}
 
+char**
+	produtosCompradosPorTodos(char** codSempre, List_Clientes l)
+	{
+		char *valueKey;
+		GList* valores; 
+		gboolean* array;
+		int pos = 0;
+
+		valores = g_hash_table_get_values(l->clientes);
+
+		while(codSempre[pos])
+			pos++;
+
+		while(valores)
+		{
+			valueKey = getCodCli((Cliente)valores->data);
+			array = getFilialCompra((Cliente)valores->data);
+
+			if((array[0] == TRUE) && (array[1] == TRUE) && (array[2] == TRUE))
+			{
+				codSempre = realloc(codSempre, sizeof(char*) * (pos+2));
+				codSempre[pos] = g_strdup(valueKey);	
+				codSempre[pos+1] = NULL;	
+				pos++;		
+			}
+			valores = valores->next;
+		}
+		return codSempre;
+	}
+
 static int 
 	comp(const void* p1, const void* p2)
 	{

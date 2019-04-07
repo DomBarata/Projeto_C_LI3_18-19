@@ -7,6 +7,7 @@
 struct catClis
 {
 	List_Clientes lista[26];
+	int clientesLidos;
 };
 
 CatClientes 
@@ -17,6 +18,7 @@ CatClientes
 
 		for(j = 0; j < 26; j++)
 			catalogo->lista[j] = inicializa_List_Clientes();
+		catalogo->clientesLidos = 0;
 		return catalogo;
 	}
 
@@ -26,6 +28,7 @@ CatClientes
 		char* codigo = getCodCli(cli);
 
 		catC->lista[codigo[0] - 'A'] = insereUmCliente(catC->lista[codigo[0] - 'A'], cli);
+		catC->clientesLidos++;
 
 	    return catC;
 	}
@@ -55,3 +58,20 @@ gboolean
 
 		return clienteExisteNaLista(l, cod);
 	}
+
+char**
+	codigosSempreCompras(CatClientes catc)
+	{
+		int i;
+		char** codSempre = malloc(sizeof(char*));
+		codSempre[0] = NULL;
+
+		for(i = 0; i < 26; i++)
+			codSempre = produtosCompradosPorTodos(codSempre, catc->lista[i]);
+
+		return codSempre;
+	}
+
+int
+	getClientesLidos(CatClientes catc)
+	{return catc->clientesLidos;}

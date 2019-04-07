@@ -8,6 +8,7 @@
 struct catProds
 {
 	List_Produtos lista[26];
+	int produtosLidos;
 };
 
 CatProdutos 
@@ -18,6 +19,7 @@ CatProdutos
 
 		for(j = 0; j < 26; j++)
 			catalogo->lista[j] = inicializa_List_Produtos();
+		catalogo->produtosLidos = 0;
 		return catalogo;
 	}
 
@@ -27,6 +29,7 @@ CatProdutos
 		char* codigo = getCodProd(prod);
 
 		catPro->lista[codigo[0] - 'A'] = insereUmProduto(catPro->lista[codigo[0] - 'A'], prod);
+		catPro->produtosLidos++;
 
 	    return catPro;
 	}
@@ -87,3 +90,7 @@ char**
 
 		return codNunca;
 	}
+
+int
+	getProdutosLidos(CatProdutos catp)
+	{return catp->produtosLidos;}

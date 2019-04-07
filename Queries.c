@@ -5,11 +5,15 @@
 #include "Facturacao.h"
 #include "Queries.h"
 
+#define PAGINACAO 25
+
 static int menu();
 static SGV Query1(SGV gestao, char* files);
 static void Query2(SGV gestao);
 static void Query3(SGV gestao);
 static void Query4(SGV gestao);
+static void	Query5(SGV gestao);
+static void Query6(SGV gestao);
 
 static int comp(const void* p1, const void* p2);
 
@@ -26,7 +30,9 @@ void
 		{
 			switch(menu())
 			{
-				case 1: printf("Insira o nome dos 3 ficheiros separados unicamente por um espaço\n(ex.: fileProdutos.txt fileClientes.txt fileVendas.txt)\n\n");
+				case 1:	system("clear");
+						printf("Query 1 - Fazer leitura de outros ficheiros de dados\n\n");
+						printf("Insira o nome dos 3 ficheiros separados unicamente por um espaço\n(ex.: fileProdutos.txt fileClientes.txt fileVendas.txt)\n\n");
 						fgets(files, 100, stdin);
 						gestao = Query1(gestao, files);
 						break;
@@ -36,8 +42,10 @@ void
 						break;
 				case 4: Query4(gestao);
 						break;
-				case 5: break;
-				case 6: break;
+				case 5: Query5(gestao);
+						break;
+				case 6: Query6(gestao);
+						break;
 				case 7: break;
 				case 8: break;
 				case 9: break;
@@ -66,9 +74,9 @@ static int
 			printf("Query 1 - Fazer leitura de outros ficheiros de dados\n");
 			printf("Query 2 - Consulta produtos do catalogo\n");
 			printf("Query 3 - Consulta vendas de produtos\n");
-			printf("Query 4 - Produtos nao comprados\n");
-			printf("Query 5 - \n");
-			printf("Query 6 - \n");
+			printf("Query 4 - Consultar produtos nao comprados\n");
+			printf("Query 5 - Consultar clientes que fizeram compras em todas as filiais\n");
+			printf("Query 6 - Consultar clientes sem compras e produtos nunca comprados\n");
 			printf("Query 7 - \n");
 			printf("Query 8 - \n");
 			printf("Query 9 - \n");
@@ -91,7 +99,7 @@ static SGV
 		char* fileProd, *fileCli, *fileVendas;
 		VendasFactEFil auxStruct;
 
-		if(!strcmp(files, "\n\r"))
+		if(!strcmp(files, "\n"))
 		{
 			fileProd = NULL;
 			fileCli = NULL;
@@ -104,7 +112,6 @@ static SGV
 			fileCli = strtok(NULL, " ");
 			fileVendas = strtok(NULL, " ");
 		}
-
 		printf("Ficheiro de produtos: \"%s\", ",fileProd?fileProd:"Files/Produtos.txt");
 		printf("Ficheiro de clientes: \"%s\", ",fileCli?fileCli:"Files/Clientes.txt");
 		printf("Ficheiro de Vendas: \"%s\"\n",fileVendas?fileVendas:"Files/Vendas_1M.txt");
@@ -129,12 +136,18 @@ static void
 		system("clear");
 		List_Produtos l;
 		char letra;
+		int dim;
+		printf("Query 2 - Consulta produtos do catalogo\n\n");
 
 		printf("Insira a inicial dos produto que pretende listar\n");
 		scanf("%c", &letra);
 		getchar();
 
 		l = listaPorLetraProdutos(gestao->cp, letra);
+		dim = getDimensaoLista(l);
+		printf("Ha %d produtos começados pela letra %c\n", dim, letra);
+		printf("(Prima ENTER para continuar...)"); getchar();
+
 		consultarProdutos(l);
 	}
 
@@ -148,6 +161,7 @@ static void
 		double** totalFact, somaFact = 0;
 		char cod[7];
 
+		printf("Query 3 - Consulta vendas de produtos\n\n");
 		printf("Insira o mês:\n");
 		scanf("%d", &mes);
 		getchar();
@@ -209,11 +223,13 @@ static void
 static void
 	Query4(SGV gestao)
 	{
-		int check, j = 0;
+		system("clear");
+		int check, i = 0, j = 0, k = 0, pag = 0;
 		char*** array; //[Filial][indice][string]
 		char** codNunca;
 		int total[NUMFILIAIS];
-
+			
+		printf("Query 4 - Consultar produtos nao comprados\n\n");
 		printf("Apresentar resultados:\n");
 		printf("\t 1 - Todos as filiais\n");
 		printf("\t 2 - Filial a Filial\n");
@@ -226,42 +242,140 @@ static void
 			codNunca = codigosNenhumaFilial(gestao->cp);
 			while(codNunca[j])
 					j++;
-			printf("%d\n", j);
+
 			qsort(codNunca, j, sizeof(char*), comp);	
 		
-			j = 0;
-			while(codNunca[j])
+		
+			system("clear");
+			k = 0;
+			printf("\nHouveram %d produtos nao comprados em nenhuma filial\n", j);
+			printf("(Prima ENTER para continuar...)"); getchar();
+			
+			while(codNunca[i])
 			{
-				printf("%s\n", codNunca[j]);
-				j++;
+				system("clear");
+				k = 0;
+				
+				//print 25 por paginas, e no fim, se nao tiver 25, print as que tem e sai
+				while(k < PAGINACAO && codNunca[i])
+				{
+					printf("%s\n", codNunca[i]);	
+					i++;
+					k++;
+				}
+				pag++;
+				printf("Pagina %d de %d\n", pag, (j / PAGINACAO)+1); getchar();
+				
 			}
 		}
 		else //Filial
 		{
 			array = listaProdutosNaoComprados(gestao->cp);
 
-			for (int i = 0; i < NUMFILIAIS; ++i)
+			//ciclo for a executar um vez por filial
+			for (i = 0; i < NUMFILIAIS; ++i)
 			{
 				j=0;
-				while(array[i][j])
-					j++;
 
+				//Calcular a dimensao do array
+				while(array[i][j])
+					j++;				
+
+				//guardar a dimensao do array
 				total[i] = j;
+
+				//ordenacao do array
 				qsort(array[i], j, sizeof(char*), comp);
 			}
 
-			for (int i = 0; i < NUMFILIAIS; ++i)
+			for (i = 0; i < NUMFILIAIS; ++i)
 			{
-				printf("-----FILIAL %d-----\n", i+1);
+				printf("\nNa filial %d houveram %d produtos nao comprados\n", i+1, total[i]);
+				printf("(Prima ENTER para continuar...)"); getchar();
+
 				j = 0;
+				pag = 0;
+				//enquanto na filial i, existirem strings em j, repete
 				while(array[i][j])
 				{
-					printf("%s\n", array[i][j]);
-					j++;
+					system("clear");
+					k = 0;
+
+					//print 25 por paginas, e no fim, se nao tiver 25, print as que tem e sai
+					while(k < PAGINACAO && array[i][j])
+					{
+						printf("%s\n", array[i][j]);	
+						j++;
+						k++;
+					}
+					pag++;
+					printf("Filial %d - Pagina %d de %d\n", i+1, pag, (total[i] / PAGINACAO)+1); getchar();
+					
 				}
-				getchar();
 			}
 		}
+	}
+
+static void
+	Query5(SGV gestao)
+	{
+		system("clear");
+		int i = 0, j = 0, k = 0, pag = 0;
+		char** codSempre;
+			
+		printf("Query 5 - Consultar clientes que fizeram compras em todas as filiais\n\n");
+				
+		codSempre = codigosSempreCompras(gestao->ccli);
+		while(codSempre[j])
+				j++;
+
+		qsort(codSempre, j, sizeof(char*), comp);	
+	
+	
+		system("clear");
+		k = 0;
+		printf("\nHouveram %d que fizeram compras em todas as filiais\n", j);
+		printf("(Prima ENTER para continuar...)"); getchar();
+		
+		while(codSempre[i])
+		{
+			system("clear");
+			k = 0;
+			
+			//print 25 por paginas, e no fim, se nao tiver 25, print as que tem e sai
+			while(k < PAGINACAO && codSempre[i])
+			{
+				printf("%s\n", codSempre[i]);	
+				i++;
+				k++;
+			}
+			pag++;
+			printf("Pagina %d de %d\n", pag, (j / PAGINACAO)+1); getchar();
+				
+		}
+	}
+
+static void
+	Query6(SGV gestao)
+	{
+		system("clear");
+		int totalClientes, produtosNada = 0, clientesTudo = 0;
+		char** codSempre, **codNunca;
+
+		totalClientes = getClientesLidos(gestao->ccli);
+
+		codSempre = codigosSempreCompras(gestao->ccli);
+		while(codSempre[clientesTudo])
+				clientesTudo++;
+
+
+		codNunca = codigosNenhumaFilial(gestao->cp);
+			while(codNunca[produtosNada])
+					produtosNada++;
+
+		printf("Query 6 - Consultar clientes sem compras e produtos nunca comprados\n\n");
+		printf("Houveram %d clientes que não fizeram compras\n", totalClientes-clientesTudo);
+		printf("Houveram %d produtos que não foram comprados\n", produtosNada);
 		printf("(Prima ENTER para continuar...)"); getchar();
 	}
 

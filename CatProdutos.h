@@ -27,4 +27,6 @@ List_Produtos listaPorLetraProdutos(CatProdutos catp, char letra);
 //funcao que verifica que o produto esta inserido no catalogo
 gboolean produtoExisteNoCatalogo(CatProdutos catp, char* cod);
 
+int	getProdutosLidos(CatProdutos catp);
+
 #endif

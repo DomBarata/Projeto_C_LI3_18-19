@@ -20,4 +20,6 @@ void consultarClientes(List_Clientes l);
 //Funcao que dada uma lista, verifica se o codigo do cliente esta inserido
 gboolean clienteExisteNaLista(List_Clientes l, char* codCli);
 
+char** produtosCompradosPorTodos(char** codSempre, List_Clientes l);
+
 #endif
