@@ -34,13 +34,13 @@ List_Clientes
 	{
 		Cliente c;
 
-		c = g_hash_table_lookup(l->clientes, cli);
-		c = setFilialCompra(c, fil);
+		c = g_hash_table_lookup(l->clientes, cli);	//retorna o apontador
+		c = setFilialCompra(c, fil);				//apontador e modificado, logo nao necessita insert
 
 	    return l;
 	}
 
-void 
+void //funcao usada apenas em testes
 	consultarClientes(List_Clientes l)
 	{
 		void** array;
@@ -64,6 +64,15 @@ void
 			i++;
 		}
 }
+
+char**
+	listaToArray(List_Clientes l)
+	{
+		guint* tam = malloc(sizeof(guint));
+		*tam = g_hash_table_size(l->clientes);
+
+		return (char**)g_hash_table_get_keys_as_array(l->clientes, tam);
+	}
 
 gboolean
 	clienteExisteNaLista(List_Clientes l, char* codCli)	

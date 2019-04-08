@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include "Produto.h"
 
+#define NUMFILIAIS 3
+
 struct prod
 {
 	char* produto;
-	gboolean filialVenda[3];
+	gboolean filialVenda[NUMFILIAIS];
 };
 
 Produto //Inicializa a struct prod alocando memoria
@@ -14,9 +16,11 @@ Produto //Inicializa a struct prod alocando memoria
 	{
 		Produto p = malloc(sizeof(struct prod));
 		p->produto = g_strdup(codProd);
-		p->filialVenda[0] = FALSE;
-		p->filialVenda[1] = FALSE;
-		p->filialVenda[2] = FALSE;
+
+		//inicializa a estrutura a zero
+		for(int i = 0; i < NUMFILIAIS; i++)
+			p->filialVenda[i] = FALSE;
+
 		return p;
 	}
 

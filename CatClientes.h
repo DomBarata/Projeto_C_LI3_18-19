@@ -23,8 +23,10 @@ List_Clientes listaPorLetraClientes(CatClientes catc, char letra);
 //funcao que verifica que o cliente esta inserido no catalogo
 gboolean clienteExisteNoCatalogo(CatClientes catc, char* cod);
 
+//retorna um array de codigos de clientes que compraram em todas as filiais
 char** codigosSempreCompras(CatClientes catc);
 
+//retorna o numero de clientes inseridos no catalogo
 int	getClientesLidos(CatClientes catc);
 
 #endif

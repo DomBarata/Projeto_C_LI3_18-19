@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include "Cliente.h"
 
+#define NUMFILIAIS 3
+
 struct cli
 {
 	char* cliente;
-	gboolean filialCompra[3];
+	gboolean filialCompra[NUMFILIAIS];
 };
 
 Cliente
@@ -14,14 +16,17 @@ Cliente
 	{
 		Cliente c = malloc(sizeof(struct cli));
 		c->cliente = g_strdup(codCli);
-		for (int i = 0; i < 3; ++i)
-			c->filialCompra[i] = 0;
+
+		//inicializa todas as filiais a zero
+		for (int i = 0; i < NUMFILIAIS; ++i)
+			c->filialCompra[i] = FALSE;
 
 		return c;
 	}
 
 char*
-	getCodCli(Cliente c) {return c->cliente;}
+	getCodCli(Cliente c) 
+	{return c->cliente;}
 
 gboolean
 	verificaCliente(Cliente codigo)

@@ -66,12 +66,13 @@ char***
 		int i;
 		char*** filiaisEmBranco = (char***)malloc(sizeof(char**) * NUMFILIAIS);
 		
+		//inicializa a variavel a NULL
 		for (i = 0; i < NUMFILIAIS; ++i)
 		{
 			filiaisEmBranco[i] = NULL;
 		}
 
-
+		
 		for(i = 0; i < 26; i++)
 			filiaisEmBranco = descobreProdutos(filiaisEmBranco, catp->lista[i]);
 

@@ -16,8 +16,15 @@ static void	Query5(SGV gestao);
 static void Query6(SGV gestao);
 static void Query7(SGV gestao);
 static void Query8(SGV gestao);
+static void Query9(SGV gestao);
+static void Query10(SGV gestao);	//Nao esta a 100% - Falta juntar as quantidades dos produtos com os mesmo codigo
 
+static void Query12(SGV gestao);	//Nao esta a funcionar!!!!
+
+//Funcoes auxiliares
+static void	ordenaProdQtd(char** cod, int* quant);
 static int comp(const void* p1, const void* p2);
+static int compStr(const void* p1, const void* p2);
 
 
 void
@@ -26,7 +33,7 @@ void
 		gboolean flag = TRUE;
 		char files[100] = "";
 
-		gestao = Query1(gestao, files);
+		gestao = Query1(gestao, files);	//le os ficheiros predefinidos
 
 		do
 		{
@@ -52,10 +59,13 @@ void
 						break;
 				case 8: Query8(gestao);
 						break;
-				case 9: break;
-				case 10: break;
+				case 9: Query9(gestao);
+						break;
+				case 10: Query10(gestao);
+						 break;
 				case 11: break;
-				case 12: break;
+				case 12: Query12(gestao);
+						 break;
 				case 0: flag = FALSE;
 						break;
 			}
@@ -83,11 +93,12 @@ static int
 			printf("Query 6 - Consultar clientes sem compras e produtos nunca comprados\n");
 			printf("Query 7 - Tabela de numero total de produtos comprados por determinado cliente\n");
 			printf("Query 8 - Consultar numero de vendas e totais faturados num intervalo de meses\n");
-			printf("Query 9 - \n");
-			printf("Query 10 - \n");
+			printf("Query 9 - Consultar clientes que compraram determinado produto, em determinada filial\n");
+			printf("Query 10 - Lista de produtos mais comprados por determinado cliente\n");
 			printf("Query 11 - \n");
 			printf("Query 12 - \n");
 			printf("0 - Sair\n");
+			printf("Insira a Query pretendida: ");
 			scanf("%d", &choice);
 			getchar();
 		}
@@ -116,9 +127,6 @@ static SGV
 			fileCli = strtok(NULL, " ");
 			fileVendas = strtok(NULL, " ");
 		}
-		printf("Ficheiro de produtos: \"%s\", ",fileProd?fileProd:"Files/Produtos.txt");
-		printf("Ficheiro de clientes: \"%s\", ",fileCli?fileCli:"Files/Clientes.txt");
-		printf("Ficheiro de Vendas: \"%s\"\n",fileVendas?fileVendas:"Files/Vendas_1M.txt");
 
 		gestao->cp = criaCatalogoProdutos(gestao->cp, fileProd);
 
@@ -247,7 +255,7 @@ static void
 			while(codNunca[j])
 					j++;
 
-			qsort(codNunca, j, sizeof(char*), comp);	
+			qsort(codNunca, j, sizeof(char*), compStr);	
 		
 		
 			system("clear");
@@ -289,7 +297,7 @@ static void
 				total[i] = j;
 
 				//ordenacao do array
-				qsort(array[i], j, sizeof(char*), comp);
+				qsort(array[i], j, sizeof(char*), compStr);
 			}
 
 			for (i = 0; i < NUMFILIAIS; ++i)
@@ -333,7 +341,7 @@ static void
 		while(codSempre[j])
 				j++;
 
-		qsort(codSempre, j, sizeof(char*), comp);	
+		qsort(codSempre, j, sizeof(char*), compStr);	
 	
 	
 		system("clear");
@@ -404,6 +412,7 @@ static void
 				}
 			}
 
+			//Cria a tabela
 			printf("%s\t|%s|%s|%s\n", "MES", "    FILIAL 1   ", "    FILIAL 2   ", "     FILIAL 3   ");
 			for(int j = 0; j < 12; j++)
 				printf("%d\t|\t%d\t|\t%d\t|\t%d\n", j+1, somaMesFil[0][j], somaMesFil[1][j], somaMesFil[2][j]);
@@ -457,8 +466,163 @@ static void
 		printf("(Prima ENTER para continuar...)"); getchar();
 	}
 
+static void 
+	Query9(SGV gestao)
+	{
+		system("clear");
+		char cod[7];
+		int fil;
+		char** codigosN;
+		char** codigosP;
+		int i = 0, j = 0;
+
+		printf("Query 9 - Consultar clientes que compraram determinado produto, em determinada filial\n\n");
+		printf("Insira o codigo do produto\n");
+		scanf("%s", cod);
+		getchar();
+		printf("Insira o numero da filial onde pretende efetuar a busca\n");
+		scanf("%d", &fil);
+		getchar();
+
+		codigosN = cClienteQueCompraramOProduto(gestao->filiais[fil-1], gestao->ccli, cod, FALSE);
+		codigosP = cClienteQueCompraramOProduto(gestao->filiais[fil-1], gestao->ccli, cod, TRUE);
+
+		system("clear");
+		printf("Os codigos de clientes que compraram o produto %s na filial %d sao:\n", cod, fil);
+		printf("MODO NORMAL:\n");
+		while(codigosN[i])
+		{
+			printf("%s\n", codigosN[i]);
+			i++;
+		}
+		if(i != 1)
+			printf("%d clientes compraram o produto\n", i);
+		else
+			printf("%d cliente comprou o produto\n", i);
+
+
+		printf("\nMODO PROMOCIONAL:\n");
+		while(codigosP[j])
+		{
+			printf("%s\n", codigosP[j]);
+			j++;
+		}
+		if(j != 1)
+			printf("%d clientes compraram o produto\n", j);
+		else
+			printf("%d cliente comprou o produto\n", j);
+
+		printf("O produto foi comprado por %d clientes\n", i+j);	
+		printf("(Prima ENTER para continuar...)"); getchar();
+	}
+
+static void //Nesta query, falta ver quando os codigos das filias sao repetidos e somar as suas quantidades
+	Query10(SGV gestao)
+	{
+		system("clear");
+		char** arrayProdutos, **codigosProdutos = malloc(sizeof(char*));
+		int* arrayQuantidade;
+		int* quantidades = malloc(sizeof(int));
+		int i = 0, j = 0, k = 0;
+		char cliente[6];
+		codigosProdutos[0] = NULL;
+		quantidades[0] = 0;
+
+		printf("Query 10 - Lista de produtos mais comprados por determinado cliente\n\n");
+		printf("Insira o codigo de cliente\n");
+		scanf("%s", cliente);
+		getchar();
+
+		for(i = 0; i < NUMFILIAIS; i++)
+		{
+			arrayProdutos = getProdutos(gestao->filiais[i], cliente);
+			arrayQuantidade = getQuantidades(gestao->filiais[i], cliente);
+			
+			j = 0;
+			while(arrayProdutos[j])
+			{
+				codigosProdutos[k] = g_strdup(arrayProdutos[j]);
+				codigosProdutos = realloc(codigosProdutos, sizeof(char*) * (k+2));
+				codigosProdutos[k+1] = NULL;
+				quantidades[k] = arrayQuantidade[j];
+				quantidades = realloc(quantidades, sizeof(int) * (k+2));
+				quantidades[k+1] = 0;
+				k++;
+				j++;
+			}
+		}
+
+		ordenaProdQtd(codigosProdutos, quantidades);
+		i = 0;
+		while(codigosProdutos[i])
+		{
+			printf("%s - %d\n", codigosProdutos[i], quantidades[i]);
+			i++;
+		}
+		getchar();
+	}
+
+static void 
+	Query12(SGV gestao)
+	{
+		char** arrayProdutos;
+		int i = 0, j = 0;
+		char cliente[6];
+
+		printf("insira o codigo de cliente\n");
+		scanf("%s", cliente);
+		getchar();
+
+		for(i = 0; i < NUMFILIAIS; i++)
+		{
+			arrayProdutos = getProdutos(gestao->filiais[i], cliente);
+			j=0;
+			while(arrayProdutos[j])
+			{
+				printf("%s\n", arrayProdutos[j]);
+				j++;
+			}
+		}
+		getchar();
+	}
+
+static void
+	ordenaProdQtd(char** cod, int* quant)
+	{
+		int* permanece;
+		char** codCopy;
+		int i = 0, j = 0, tam = 0;
+
+		while(quant[tam])
+			tam++;
+
+		permanece = malloc(sizeof(int) * tam);
+		codCopy = malloc(sizeof(char*) * tam);
+		for (int i = 0; i < tam; ++i)
+		{
+			permanece[i] = quant[i];
+			codCopy[i] = g_strdup(cod[i]);
+		}
+		qsort(quant, tam, sizeof(int), comp);
+
+		while(quant[i])
+		{
+			j = 0;
+			while(quant[i] != permanece[j])
+				j++;
+			cod[i] = g_strdup(codCopy[j]);
+			i++;
+		}
+	}
+
 static int 
 	comp(const void* p1, const void* p2)
+	{
+		return ( *(int*)p2 - *(int*)p1 );
+	}
+
+static int 
+	compStr(const void* p1, const void* p2)
 	{
 		int size = strcmp(* (char * const *) p1, * (char * const *) p2);
 

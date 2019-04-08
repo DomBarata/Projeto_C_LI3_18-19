@@ -36,8 +36,8 @@ List_Produtos
 	{
 		Produto p;
 
-		p = g_hash_table_lookup(l->produtos, prod);
-		p = setFilialVenda(p, fil);
+		p = g_hash_table_lookup(l->produtos, prod);	//devolve o apontador para o produto
+		p = setFilialVenda(p, fil);	//mudança do apontador, logo nao precisa de reinserir na hastable
 
 	    return l;
 	}
@@ -51,13 +51,13 @@ void
 		int arraySize;
 		guint* tam = malloc(sizeof(guint));
 		
-		*tam = g_hash_table_size(l->produtos);
+		*tam = g_hash_table_size(l->produtos);	//calcula o numero de chaves na hashable
 		arraySize = (int)*tam;
 
-		array = g_hash_table_get_keys_as_array (l->produtos, tam);
+		array = g_hash_table_get_keys_as_array (l->produtos, tam);	
 		arrayFinal = (char**)array;
 
-		qsort(arrayFinal, arraySize, sizeof(char*), comp);
+		qsort(arrayFinal, arraySize, sizeof(char*), comp);	//ordenacao do array
 		
 		while(arrayFinal[i])
 		{
@@ -93,36 +93,38 @@ char***
 		gboolean* array;
 		int pos = 0;
 
+		//inicializacao a 0 da variavel filiaisEmBranco
 		if(!filiaisEmBranco[0])
 		{
 			for (int i = 0; i < NUMFILIAIS; ++i)
 			{
 				filiaisEmBranco[i] = malloc(sizeof(char*));
-				filiaisEmBranco[i][0] = NULL;
+				filiaisEmBranco[i][0] = NULL;	//divivida por filiais
 			}
 		}
 
-		valores = g_hash_table_get_values(l->produtos);
+		valores = g_hash_table_get_values(l->produtos);	//lista de valores
 
 		while(valores)
 		{
-			valueKey = getCodProd((Produto)valores->data);
-			array = getFilialVenda((Produto)valores->data);
+			valueKey = getCodProd((Produto)valores->data);	//buscar a key, replicada nos values desta hashtable
+			array = getFilialVenda((Produto)valores->data);	//buscar a filial
 
 			for (int i = 0; i < NUMFILIAIS; ++i)
 			{
-				if(!array[i])
+				if(!array[i])	//se o produto nao foi comprado na filial[i] 
 				{ 	
 					pos = 0;
-					while(filiaisEmBranco[i][pos])
+					while(filiaisEmBranco[i][pos])	//calcula a posiçao onde vai inserir
 						pos++;
 
+					//copia o codigo do produto nao comprado para uma variavel
 					filiaisEmBranco[i] = realloc(filiaisEmBranco[i], ((pos+2) * sizeof(char*)));
 					filiaisEmBranco[i][pos] = g_strdup(valueKey);
 					filiaisEmBranco[i][pos+1] = NULL;
 				}
 			}
-			valores = valores->next;
+			valores = valores->next;	//posicao a seguir da GList
 		}
 
 		return filiaisEmBranco;
@@ -145,7 +147,7 @@ char**
 			valueKey = getCodProd((Produto)valores->data);
 			array = getFilialVenda((Produto)valores->data);
 
-			if((array[0] == FALSE) && (array[1] == FALSE) && (array[2] == FALSE))
+			if((array[0] == FALSE) && (array[1] == FALSE) && (array[2] == FALSE))	//se nao foi comprado em nenhuma filial
 			{
 				codNunca = realloc(codNunca, sizeof(char*) * (pos+2));
 				codNunca[pos] = g_strdup(valueKey);	

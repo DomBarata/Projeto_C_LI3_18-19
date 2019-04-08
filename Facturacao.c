@@ -63,8 +63,8 @@ static Fact_Info
 		Numeros n;
 		char* key;
 		key = getCodProdVendas(v);
-		n = g_hash_table_lookup(f->info, key);//segfault here
-		if(!n)
+		n = g_hash_table_lookup(f->info, key);
+		if(!n)		//se nao encontrar o codProduto na hastable
 		{
 			n = malloc(sizeof(struct numeros));
 			for (int i = 0; i < NUMFILIAIS; ++i)
@@ -76,10 +76,10 @@ static Fact_Info
 			n->qtd[getFilialVendas(v)-1] = getQuantidadeVendas(v);
 			n->precoTotal[getFilialVendas(v)-1] = getprecoUnitVendas(v) * getQuantidadeVendas(v);
 			
-			g_hash_table_insert(f->info, key, n);
+			g_hash_table_insert(f->info, key, n);	//Nova reinsercao
 		}
-		else
-		{
+		else	//se encontrar
+		{		//Update dos apontadores
 			n->qtd[getFilialVendas(v)-1] += getQuantidadeVendas(v);
 			n->precoTotal[getFilialVendas(v)-1] += getprecoUnitVendas(v) * getQuantidadeVendas(v);
 		}

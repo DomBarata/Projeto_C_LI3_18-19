@@ -121,3 +121,128 @@ int
 		}
 		return soma;
 	}
+
+char**
+	cClienteQueCompraramOProduto(Filial f, CatClientes catc, char* codProd, gboolean promo)
+	{
+		AuxProds estrutura;
+		List_Clientes l;
+		char** clientesQueCompraram = malloc(sizeof(char*));
+		clientesQueCompraram[0] = NULL;
+		char** arrayClientes[26];
+		int i = 0, j = 0, k = 0, dim = 0;
+
+		for (i = 0; i < 26; ++i)
+		{
+			l = listaPorLetraClientes(catc, i + 'A');
+			arrayClientes[i] = listaToArray(l);
+		}
+
+		i = 0;
+		while(arrayClientes[i])
+		{
+			j = 0;
+			while(arrayClientes[i][j])
+			{
+				k = 0;
+				while(k <12)
+				{
+					if(g_hash_table_contains(f->mes[k]->clis, arrayClientes[i][j]))
+					{
+						estrutura = g_hash_table_lookup(f->mes[k]->clis, arrayClientes[i][j]);
+						if(g_hash_table_contains(estrutura->prods[promo], codProd))
+						{
+							clientesQueCompraram[dim] = g_strdup(arrayClientes[i][j]);
+							clientesQueCompraram = realloc(clientesQueCompraram, (sizeof(char*)*(dim+2)));
+							clientesQueCompraram[dim+1] = NULL;
+							dim++;
+						}
+					}
+					k++;
+				}
+				j++;
+			}
+			i++;
+		}
+		return clientesQueCompraram;
+	}
+
+char**
+	getProdutos(Filial f, char* cod)
+	{
+		AuxProds estrutura;
+		int k = 0, dim = 0, j = 0, p = 0;
+		char** produtos = malloc(sizeof(char*));
+		char** keys;
+		guint* tam = malloc(sizeof(guint));
+		produtos[0] = NULL;
+
+		while(k < 12)
+		{
+			if(g_hash_table_contains(f->mes[k]->clis, cod))
+			{
+				estrutura = g_hash_table_lookup(f->mes[k]->clis, cod);
+				p = 0;
+				while(p < 2)
+				{
+					*tam = g_hash_table_size(estrutura->prods[p]);
+
+					keys = (char**)g_hash_table_get_keys_as_array(estrutura->prods[p], tam);
+					j = 0;
+					while(keys[j])
+					{
+						produtos[dim] = g_strdup(keys[j]);
+						produtos = realloc(produtos, (sizeof(char*)*(dim+2)));
+						produtos[dim+1] = NULL;
+						dim++;
+
+						j++;
+					}
+					p++;
+				}
+			}
+			k++;
+		}
+	return produtos;
+	}
+
+int*
+	getQuantidades(Filial f, char* cod)
+	{
+		AuxProds estrutura;
+		Values v;
+		int k = 0, dim = 0, j = 0, p = 0;
+		int* quantidades = malloc(sizeof(int));
+		char** keys;
+		guint* tam = malloc(sizeof(guint));
+		quantidades[0] = 0;
+
+		while(k < 12)	//12 meses
+		{
+			if(g_hash_table_contains(f->mes[k]->clis, cod))	//se a HashTable clientes tiver aquele codigo
+			{
+				estrutura = g_hash_table_lookup(f->mes[k]->clis, cod);	//HashTable Produtos
+				p = 0;
+				while(p < 2)	//promo e nao promo
+				{
+					*tam = g_hash_table_size(estrutura->prods[p]);
+
+					keys =(char**) g_hash_table_get_keys_as_array(estrutura->prods[p], tam);
+					j = 0;
+					while(keys[j])
+					{
+						v = g_hash_table_lookup(estrutura->prods[p], keys[j]);
+						quantidades[dim] = v->quantidade;
+						quantidades = realloc(quantidades, (sizeof(int)*(dim+2)));
+						quantidades[dim+1] = 0;
+						dim++;
+
+						j++;
+					}
+					p++;
+				}
+			}
+			k++;
+		}
+	return quantidades;
+	}

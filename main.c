@@ -1,3 +1,9 @@
+/*
+ *Auhors: Tiago Barata e Melânia Pereira
+ *Projeto no ambito da UC LI3
+ *Last Edit: 08/04/2019
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,11 +35,11 @@ CatProdutos
 		int linhasLidas = 0;
 		Produto p;
 
-		if(fileRead == NULL)
+		if(fileRead == NULL)	//caso nao sejam passados argumentos, assume-se o ficheiro
 			fileRead = g_strdup("Files/Produtos.txt");
 
 		fp = fopen(fileRead, "r");
-		if(fp == NULL)	
+		if(fp == NULL)	//caso nao exista o ficheiro o programa termina com um erro
 		{
 			perror("File de produtos inexistente"); 
 			catp = NULL;
@@ -45,8 +51,10 @@ CatProdutos
 			{
 				strtok(str, "\n\r");
 				p = criaProduto(str);
-				if(verificaProduto(p))
+
+				if(verificaProduto(p))	//apenas insere se a linha estiver bem construida
 					catp = insereProdutos(catp, p);	
+
 				linhasLidas++;
 			}
 			fclose(fp);
@@ -123,12 +131,18 @@ VendasFactEFil
 				v = divideLinhasDeVenda(str, catp, catc);
 				if(v)
 				{
+					//atualizacao das flags de filiais em catalogo
 					catp = setCatProdutos(catp, getCodProdVendas(v), getFilialVendas(v));
 					catc = setCatClientes(catc, getCodCliVendas(v), getFilialVendas(v));
+
+					//cria a faturacao e as filiais na estrutura de dados auxiliar
 					ven->fact = insereNovaFacturacao(v, ven->fact);
 					ven->fil[getFilialVendas(v)-1] = insereFilial(v, ven->fil[getFilialVendas(v)-1]);
+
+					//conta as linhas que foram escritas na estrutura
 					linhasValidas++;
 				}
+				//conta as linhas do ficheiro
 				linhasLidas++;
 			}
 			fclose(fp);
@@ -140,7 +154,7 @@ VendasFactEFil
 Facturacao
 	GeraFact(VendasFactEFil vF) {return vF->fact;}
 
-Filial //dentro de um ciclo for lim=3
+Filial //dentro de um ciclo for lim=NUMFILIAIS
 	GeraUmaFilial(VendasFactEFil vF, int i) {return vF->fil[i];}
 
 SGV
